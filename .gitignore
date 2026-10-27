@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.private/
+.venv/
+__pycache__/
+*.pyc
+.env*
+!.env.example
+*.xlsx
+*.pdf
+*.zip
+CODEX_MASTERPROMPT_KAMOJANG.md
+playwright-report/
+test-results/
+coverage/
+*.local
