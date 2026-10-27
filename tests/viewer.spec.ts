@@ -73,7 +73,8 @@ test("touch orbit, pinch, high DPR and pointer drag change the actual camera", a
 test("genuine viewer controls, keyboard, reduced motion and repeated resource disposal", async ({
   page,
 }) => {
-  test.setTimeout(90000);
+  // Five genuine mesh/GPU initialization cycles, each retaining a 30s limit.
+  test.setTimeout(180000);
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -230,6 +231,7 @@ test("lazy viewer module failure stays inside its panel", async ({ page }) => {
 test("slow model loading can switch to actual-mesh fallback immediately", async ({
   page,
 }) => {
+  test.setTimeout(45000);
   let release: () => void = () => {};
   const held = new Promise<void>((resolve) => {
     release = resolve;
@@ -238,7 +240,12 @@ test("slow model loading can switch to actual-mesh fallback immediately", async 
     await held;
     await r.abort().catch(() => {});
   });
+  // Synchronize with the held mesh request, after the lazy module is mounted.
+  const started = page.waitForRequest("**/models/steam-turbine.glb", {
+    timeout: 30000,
+  });
   await page.goto("/#/turbin");
+  await started;
   await expect(page.locator(".turbine-viewer")).toHaveAttribute(
     "data-state",
     "loading",
