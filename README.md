@@ -92,4 +92,6 @@ No 3D mesh is distributed. [Steam Turbine by landinweaver](https://sketchfab.com
 
 ## Contributing, security and licensing
 
+An evidence-based [Indonesian engineering report](docs/laporan-engineering.md) records implemented behavior and remaining acceptance gates.
+
 Maintainer: [vlnvn](https://github.com/vlnvn). Read [CONTRIBUTING](CONTRIBUTING.md) and [SECURITY](SECURITY.md). Code license selection is pending owner authorization; public availability alone does not grant an open-source license. Research sources and third-party assets have separate rights. No release, customer deployment, industrial certification or security SLA is claimed.
