@@ -54,6 +54,7 @@ test("navigation, selections, browser history, refresh and all sensor views", as
       page.getByRole("button", { name, exact: true }),
     ).toHaveAttribute("aria-pressed", "true");
     await expect(page.locator("tbody tr")).toHaveCount(25);
+    await expect(page.locator(".chart-heading h2")).toHaveText(name);
   }
   await page
     .getByRole("button", { name: "Pilih baris 3", exact: true })
@@ -215,14 +216,14 @@ test("malformed and invalid uploads preserve previous dataset", async ({
   await page.getByRole("button", { name: "Lihat hasil analisis" }).click();
   await expect(page.locator("tbody tr")).toHaveCount(25);
 });
-test("method disclosure and blocked model routes have meaningful actions", async ({
+test("method disclosure and licensed model routes have meaningful actions", async ({
   page,
 }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Jelajahi turbin" }).click();
   await expect(page).toHaveURL(/turbin/);
-  await page.getByRole("button", { name: "Lihat status aset" }).click();
-  await expect(page.getByRole("dialog")).toContainText("belum diperoleh");
+  await page.getByRole("button", { name: "Kredit aset" }).click();
+  await expect(page.getByRole("dialog")).toContainText("CC BY 4.0");
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "← Ringkasan" }).click();
   await expect(page).toHaveURL(/ringkasan/);
@@ -232,15 +233,15 @@ test("method disclosure and blocked model routes have meaningful actions", async
   await expect(page.getByRole("dialog")).toContainText("Tidak mewakili");
   await page.getByRole("button", { name: "Tutup", exact: true }).click();
   await methods(page);
-  for (const name of [
-    "Periksa sumber data",
-    "Acuan statistik robust",
-    "GPR · riset",
-  ]) {
+  for (const name of ["Periksa sumber data", "Acuan statistik robust"]) {
     await page.getByRole("button", { name, exact: false }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await page.keyboard.press("Escape");
   }
+  await page.getByRole("button", { name: "GPR · prediksi" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Evaluasi prediksi GPR" }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Lebih ketat", exact: true }).click();
   await expect(page).toHaveURL(/z=4$/);
   await page.getByRole("button", { name: "Standar", exact: true }).click();
@@ -251,6 +252,7 @@ for (const viewport of [
   { width: 1440, height: 900 },
   { width: 1280, height: 800 },
   { width: 390, height: 844 },
+  { width: 430, height: 932 },
 ])
   test(`responsive screenshots, axe and offline ${viewport.width}`, async ({
     page,
@@ -265,6 +267,12 @@ for (const viewport of [
     });
     for (const route of ["ringkasan", "analisis", "metode"]) {
       await page.goto(`/#/${route}`);
+      if (route === "ringkasan")
+        await expect(page.locator(".turbine-viewer")).toHaveAttribute(
+          "data-state",
+          "ready",
+          { timeout: 30000 },
+        );
       await page.evaluate(() => document.fonts.ready);
       await expect(page.locator("h1")).toBeVisible();
       expect(

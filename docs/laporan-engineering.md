@@ -1,52 +1,47 @@
 # Laporan engineering Kamojang Unit 5
 
-Tanggal verifikasi: 28 Oktober 2026, Asia/Jakarta. Status keseluruhan: **implementasi inti berfungsi; deliverable masterprompt belum selesai** karena gerbang aset 3D dan kesetiaan visual belum terpenuhi.
+Verifikasi lokal: 28 Oktober 2026, Asia/Jakarta. Pekerjaan dilanjutkan pada branch `feat/initial-platform` dan [PR draft #1](https://github.com/vlnvn/kamojang/pull/1). Tidak ada merge atau deployment publik. Aplikasi belum diklaim flawless atau pixel-perfect.
 
-## Implementasi aktual
+## Hasil implementasi
 
-Aplikasi React/TypeScript menyediakan Ringkasan, Analisis lima parameter dan Metode dalam Bahasa Indonesia. Impor CSV/XLSX berjalan di worker lokal dengan validasi skema, satuan, tanggal, angka berhingga, ukuran berkas, jumlah baris, formula, lembar tambahan dan ekspansi ZIP. Impor dapat dibatalkan; kegagalan mempertahankan data sebelumnya. Setiap observasi menyimpan hash sumber, baris asli dan identitas stabil; tanggal berulang tidak digabung.
+Judul parameter menggunakan **Tekanan, NCG, Kualitas uap, TDS, Suhu**, tanpa `.toLowerCase()` yang merusak singkatan. Tracking heading, posisi header/panel dan lebar kontrol diperbaiki berdasarkan ukuran Figma. Kegagalan konstruksi worker dan callback impor usang ditangani. Jalur median/MAD yang sudah diverifikasi tetap dipertahankan.
 
-Skor median/MAD dihitung dari masukan, bukan JSON hasil tetap. Ambang sensitivitas mengubah hasil secara deterministik. Grafik menggunakan tanggal aktual; tabel dapat dipakai dengan keyboard. Pemeriksa baris, dialog, riwayat navigasi, pilihan parameter, ekspor CSV/JSON dan penghapusan data berfungsi. Data unggahan tidak dikirim ke server atau disimpan otomatis. Contoh dan gambar publik menggunakan data sintetis independen yang diberi label jelas.
+ZIP turbin yang diberikan pemilik memuat mesh asli dan notice **CC BY 4.0** oleh landinweaver yang sesuai dengan metadata glTF. Model dioptimalkan menjadi **1.215.756 byte**; hanya dua bidang latar dihapus, tanpa menyederhanakan geometri turbin. Mesh memiliki 173.699 segitiga setelah instancing; 52.645 adalah segitiga unik tersimpan. Hash asli/hasil, lisensi, transformasi dan batas validator tersedia di [provenance](asset-provenance.md). Tampilan ini representatif, bukan digital twin perangkat Kamojang.
 
-README berbahasa Inggris, pedoman kontribusi/keamanan, metodologi, keputusan arsitektur, provenance, matriks pengujian, templat PR/issue, Dependabot dan CI tersedia. Tidak ada autentikasi, database, koneksi IoT atau status sensor langsung yang dibuat-buat.
+Viewer menyediakan mouse/touch/pinch, keyboard, zoom terbatas, reset, orbit kamera yang awalnya berhenti, mode gambar dari render mesh aktual, retry, batas pemuatan 45 detik, reduced motion, pelepasan sumber daya dan penanganan context loss. Kegagalan modul/decoder/mesh/WebGL tidak mematikan analisis. Tidak ada gerak rotor atau status operasi yang direkayasa.
 
-## Bukti verifikasi
+GPR kini benar-benar melatih lima model melalui layanan Python loopback opsional. Kernel, seed 1729, scaling hanya pada data latih dan delapan observasi uji mengikuti benchmark riset yang telah direproduksi. UI menampilkan MAE/RMSE untuk GPR dan dua baseline, prediksi uji serta peringatan optimizer. GPR bukan klasifikasi kerusakan; tanpa label insiden, precision/recall/F1 tidak dapat dinyatakan. Data hanya dikirim ke proses lokal setelah tindakan eksplisit, dibatasi 12–256 baris / satu pekerjaan / 60 detik, tidak dicatat atau disimpan. Jalur robust tetap bekerja tanpa Python.
 
-- `npm test`: **16 tes lulus**.
-- `python -m unittest discover -s scripts -p test_audit.py -v`: **6 tes lulus**.
-- `npm run test:e2e`: **11 tes publik lulus**, satu tes sumber privat dilewati secara sengaja. Tes privat dijalankan terpisah dan lulus.
-- `npm run lint`, `npm run typecheck`, `npm run format:check`, `npm run build`: lulus.
-- Dua pembaca independen cocok dengan **220 nilai dan 220 skor/flag** arsip. Workbook menghasilkan **44 observasi, 43 tanggal**, dengan **9/7/6** flag pada ambang **3,0/3,5/4,0**.
-- Enam tes sumber yang tidak diubah lulus pada salinan privat setelah hanya lapisan pembaca diganti. Suite asli tetap tercatat gagal mengimpor `artifact_tool`, bukan diklaim lulus.
-- Benchmark GPR terpisah mereproduksi 15 pasangan MAE/RMSE; dua peringatan batas optimizer dicatat. GPR menang MAE hanya untuk NCG pada split 36/8. Ini bukan akurasi deteksi kerusakan.
-- Axe dan pemeriksaan overflow dijalankan untuk tiga halaman pada **1600×960, 1440×900, 1280×800, 390×844**. Fokus dialog, Esc, pembatalan impor dan kegagalan worker diuji di browser.
-- Build lokal mencatat JS utama **246.860 byte**, worker **98.942 byte**, serta total direktori distribusi **594.870 byte**. Pengukuran gzip zlib default: **77.040** dan **30.381 byte**. Ini bukan hasil Lighthouse, Core Web Vitals lapangan, atau FPS 3D.
+## Gerbang terverifikasi
 
-Clone bersih dari branch GitHub berhasil menjalankan `npm ci`, formatter, lint, typecheck, 16 tes TypeScript, enam tes Python, build dan pemindai path/kredensial tanpa berkas riset. Keadaan Git clone dan workspace utama bersih setelah commit. [CI jarak jauh pada commit 30c1ebc](https://github.com/vlnvn/kamojang/actions/runs/40551175183) selesai sukses pada Ubuntu, termasuk job browser dan aksesibilitas. Hasil tersebut terikat pada revisi itu; commit dokumentasi berikutnya memicu pemeriksaan baru.
+| Gerbang                  | Hasil                                             | Bukti dan batas                                                                                                                  |
+| ------------------------ | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| A1 Lisensi               | PASS                                              | Notice arsip dan metadata cocok, CC BY 4.0, kredit/link/modifikasi disertakan                                                    |
+| A2 Mesh asli             | PASS                                              | GLB self-hosted dirender pada build produksi; poster berasal dari mesh yang sama                                                 |
+| A3 Interaksi             | PASS                                              | Mouse, touch/pinch DPR 2, keyboard, reset/pause, fallback/retry diuji                                                            |
+| A4 Reliabilitas/performa | PASS terbatas                                     | Siklus lifecycle dan kegagalan teruji; hasil lab Intel UHD tercatat. Stabil 60 FPS semua perangkat belum terbukti                |
+| A5 Visual                | BLOCKED untuk persetujuan; pixel-equivalence FAIL | Posisi 11 elemen kritis dalam 2 px; selisih penuh 13,038% / 7,149% / 9,913%; deviasi mesh/kontrol/data perlu persetujuan pemilik |
+| A6 Sains/privasi         | PASS terbatas                                     | 220 nilai/skor parity tetap; 15 pasangan MAE/RMSE API cocok; masukan dan gambar privat tidak dipublikasikan                      |
+| A7 GitHub                | Bukti revisi pada PR                              | Commit dan CI harus dinilai berdasarkan SHA terbaru yang dicantumkan di PR, bukan CI baseline                                    |
 
-## Git, kerahasiaan dan hak penggunaan
+Hasil lokal: **17 tes TypeScript**, **10 tes Python**, **22 tes browser publik** lulus; tiga tes sengaja dilewati pada pemanggilan publik. Suite GPR terpisah **3 lulus**, dan satu tes browser workbook privat lulus. Lint, typecheck, formatter dan build lulus. Dua peringatan optimizer riset dipertahankan. Suite paket asli masih terblokir oleh `artifact_tool`; enam assertion sumber pada salinan dengan perubahan pembaca saja lulus. Tidak ada klaim suite asli berhasil tanpa dependensinya.
 
-[PR draft #1](https://github.com/vlnvn/kamojang/pull/1) membandingkan branch `feat/initial-platform` dengan baseline `main`. Commit implementasi `9015a7c` dan CI/dokumentasi `30c1ebc` dibuat menggunakan identitas Git yang sudah dikonfigurasi; tidak ada force push, merge atau tanggal yang direkayasa. Commit dokumentasi berikutnya hanya mencatat bukti verifikasi.
+Parity workbook tetap **44 observasi / 43 tanggal**, 220 nilai dan skor/flag, serta **9/7/6** indikasi pada ambang 3,0/3,5/4,0. Keempat masukan asli tetap sesuai SHA-256 awal. Pengukuran/prediksi nyata, PDF, XLSX, ZIP, referensi Figma dan perbandingan privat tidak dikomit.
 
-Keempat masukan asli tetap utuh berdasarkan SHA-256. Excel, PDF, ZIP, pengukuran nyata, ekspor nyata serta gambar perbandingan yang memuat data privat tidak dikomit. Pemindaian terbatas memeriksa 55 path yang terpublikasi pada tahap awal; pemindaian diulang sebelum setiap push. Pemindaian pola bukan audit keamanan menyeluruh atau bukti izin redistribusi.
+## Pengukuran dan keterbatasan
 
-Font lokal memiliki lisensi OFL 1.1 yang disertakan. Ikon berasal dari desain Figma yang diberikan. Lisensi kode belum dipilih atas nama pemilik. Hak redistribusi sumber riset belum dibuktikan.
+Build produksi di Chromium 156 / renderer Intel UHD D3D11 mencatat desktop DPR 1: pemuatan 1.763,2 ms, RAF rata-rata **49,25 Hz** pada sampel 3,53 detik (termasuk stall), p95 16,8 ms, respons dua RAF 27,5 ms. Skenario viewport 430×932 DPR 2 dengan renderer dibatasi 1,5: 439,6 ms, **60,00 Hz**, p95 16,8 ms, respons 13,2 ms. Ini observasi perangkat lokal; bukan frame GPU timer, hasil telepon fisik, jaminan 60 FPS atau Core Web Vitals lapangan. Pengukuran terdahulu 59–60 Hz tidak menggantikan sampel final yang lebih rendah.
 
-## Gerbang yang tersisa
+GLB mentransfer 1.216.056 byte di localhost. Renderer menghitung 35 draw call dan 347.400 segitiga termasuk pass bayangan/lantai. Byte VRAM tidak tersedia. Chunk viewer lazy sekitar 642 kB minified / 161 kB gzip masih menghasilkan peringatan ukuran Vite yang tidak disembunyikan. Detail reproduksi dan batas pengujian ada di [matriks verifikasi](testing.md).
 
-**3D: BLOCKED.** Unduhan resmi kandidat Steam Turbine mengembalikan HTTP 401 karena autentikasi tidak tersedia pada jalur API; halaman langsung mendapat 403. Pemeriksaan sesi Windows berhenti karena kontrol Computer Use tidak dapat memastikan URL aktif untuk penegakan kebijakan. Tidak ada mesh, lisensi versi tertentu, hash aset, renderer, rotasi/zoom, fallback dari mesh, optimasi geometri atau FPS yang diklaim tersedia.
-
-**Visual: FAIL.** Perbandingan Figma terbaru pada 1600×960, tanpa masking, menghasilkan selisih piksel **10,442% Ringkasan; 7,530% Analisis; 10,289% Metode** dengan toleransi kanal RGB 16. Referensi, aktual, overlay dan difference disimpan privat. Tidak ada klaim pixel-perfect. Model yang hilang, penyesuaian konten serta sisa perbedaan tipografi/tata letak masih perlu diselesaikan.
-
-**Publikasi aplikasi dan pengaturan repositori:** tidak ada deployment publik, branch protection atau security alerts yang diklaim telah diaktifkan. PR tetap draft dan belum digabung. Konfirmasi sumber data operasional dan lisensi aset diperlukan sebelum distribusi publik yang relevan.
-
-Langkah terkecil berikutnya adalah memperoleh GLB turbin melalui unduhan resmi yang sah beserta bukti lisensi, menerapkan dan menguji renderer/fallback/kontrolnya, lalu menutup perbedaan visual dan mengulang gerbang penerimaan. Label insiden terverifikasi tetap diperlukan sebelum mengukur precision/recall/F1.
+Visual memakai Figma terkini, font lokal yang sudah dimuat, ukuran 1600×960 DPR 1, kamera/orbit berhenti dan metrik penuh yang sama (delta kanal RGB >16, tanpa masking). Ringkasan berbeda karena mesh asli menggantikan ilustrasi; Analisis/Metode membaik dari baseline 7,530%/10,289% menjadi 7,149%/9,913%. Persetujuan akhir tampilan, pengujian telepon fisik/assistive technology, field performance dan lisensi kode pemilik tetap terbuka. Tidak ada izin distribusi data riset yang diasumsikan.
 
 ## Menjalankan lokal
 
 ```sh
 npm ci
-npm run dev
+python -m pip install -r scripts/requirements-research.txt
+npm run dev:research
 ```
 
-Buka alamat localhost yang ditampilkan, lalu gunakan **Metode → Impor dan kelola data**. Perintah audit privat dan benchmark lengkap tersedia di `docs/data-methodology.md`; status setiap gerbang dan tautan CI tersedia di `docs/testing.md`.
+Gunakan **Metode → GPR · prediksi → Jalankan benchmark GPR**. `npm run dev` tetap menyediakan analisis robust dan 3D tanpa layanan Python. Tidak ada koneksi sensor langsung, akun cloud atau database operasional.

@@ -1,6 +1,6 @@
 # Security and data handling
 
-This prototype processes files in the user's browser. It has no application account system, cloud upload API or telemetry. Uploaded measurements are kept in memory and lost on refresh. Exported files contain measurements and must be handled with source-equivalent permissions. Do not import untrusted or confidential data on an untrusted shared machine.
+This prototype imports and scores files in the user's browser. Explicitly running GPR additionally sends the in-memory measurements to the optional Python process on the same device (127.0.0.1:8341). The service checks Host/Origin, bounds JSON requests to 256 KiB, permits one computation at a time and terminates computations after 60 seconds; no request measurements are logged or persisted. It must not be exposed as a public API. Local machine/process access remains a trust boundary. It has no application account system, cloud upload API or telemetry. Uploaded measurements are kept in memory and lost on refresh. Exported files contain measurements and must be handled with source-equivalent permissions. Do not import untrusted or confidential data on an untrusted shared machine.
 
 The importer restricts file extensions, MIME types, signatures, schema, row counts, bytes and archive expansion. It rejects workbook formulas, macros and external-link entries. It never inserts source strings as raw HTML. CSV export guards leading spreadsheet formula characters. These are defense-in-depth checks, not a claim that every hostile document format has been audited.
 

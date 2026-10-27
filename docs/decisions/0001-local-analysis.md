@@ -1,6 +1,6 @@
 # ADR 0001: Browser-local ingestion and one application scorer
 
-Status: accepted, 28 October 2026.
+Status: accepted, 28 October 2026; optional forecast-service boundary updated by [ADR 0002](0002-genuine-viewer-and-local-gpr.md) following the owner’s explicit GPR request. The rationale below records the original decision.
 
 The source inputs are restricted until redistribution permission is established. The exhibition needs a simple reproducible setup, but there is no authorized cloud data store, live sensor API or guaranteed Python web hosting environment. The prior package depends on artifact_tool, unavailable in this environment.
 

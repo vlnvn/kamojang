@@ -41,7 +41,7 @@ The original package tests initially failed before executing their assertions be
 
 ## Independent forecast benchmark
 
-Optional Python dependencies are pinned in `scripts/requirements-research.txt`; they are unnecessary for the frontend and public Python tests. Use a local virtual environment and install them with `python -m pip install -r scripts/requirements-research.txt`. Then:
+Optional Python dependencies are pinned in `scripts/requirements-research.txt`; they are unnecessary for robust screening and the standard-library audit tests; the GPR test suite requires them. Use a local virtual environment and install them with `python -m pip install -r scripts/requirements-research.txt`. Then:
 
 ```sh
 python scripts/benchmark.py --source "Data Steam Quality, TDS & NCG Unit 5 Kamojang-1.xlsx"
@@ -50,3 +50,9 @@ python scripts/benchmark.py --source "Data Steam Quality, TDS & NCG Unit 5 Kamoj
 The output is written only to `.private/forecast-benchmark.json`. It trains the RBF + white-noise GPR on the first 36 chronological observations and evaluates the last eight, using training-only centering/scaling and random seed 1729. Median and last-value baselines use training data only. Same-day ties are not presented as a known intraday sequence.
 
 Local execution with Python 3.14.0, NumPy 2.4.4 and scikit-learn 1.9.0 reproduced all 15 archived MAE/RMSE comparisons to six decimals. GPR had the lowest MAE for NCG only. Two optimizer-bound convergence warnings were recorded and remain a limitation. No accuracy claim for equipment anomaly classification follows from these results.
+
+## Application GPR path
+
+Run `npm run dev:research` after installing the pinned research requirements; use **Metode → GPR · prediksi → Jalankan benchmark GPR**. The UI invokes the same benchmark implementation, displays all fifteen MAE/RMSE comparisons and eight held-out points per sensor, and retains optimizer warnings. The posterior standard deviation is a model quantity, not a validated equipment-failure probability or calibrated operational confidence interval. Any variable imported dataset uses its first n−8 observations for fitting; training requires at least four rows. Duplicate dates are retained, but the split is rejected if it divides a shared date. All target centering/scaling and hyperparameter fitting use training observations only. The source PDF's split is not silently substituted.
+
+`python -m unittest discover -s scripts -p test_research.py -v` checks protocol, chronological validation and absence of target leakage. With the local service running, `python scripts/verify-research.py --source "Data Steam Quality, TDS & NCG Unit 5 Kamojang-1.xlsx" --archive Paket_Kamojang_Analisis_Sensor_Lengkap.zip` imports the authorized workbook privately and compares all fifteen returned MAE/RMSE pairs with the research archive. On 28 October 2026 it passed, retaining two optimizer warnings. No individual actual or predicted private measurement is committed. `KAMOJANG_RESEARCH=1 npx playwright test tests/forecast.spec.ts` exercises actual service fitting plus rejection/failure behavior using synthetic observations (set the environment variable with PowerShell syntax on Windows).

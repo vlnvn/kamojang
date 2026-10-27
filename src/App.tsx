@@ -1,4 +1,12 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  lazy,
+  Suspense,
+  type ReactNode,
+} from "react";
 import {
   canonicalHeaders,
   dateLabel,
@@ -14,9 +22,13 @@ import {
 } from "./domain";
 import { demo } from "./demo";
 import { Chart } from "./Chart";
+import ForecastPanel from "./ForecastPanel";
+import ViewerBoundary from "./ViewerBoundary";
+
+const TurbineViewer = lazy(() => import("./TurbineViewer"));
 
 type Page = "ringkasan" | "analisis" | "metode" | "turbin";
-type Modal = "quality" | "source" | "robust" | "gpr" | "model" | null;
+type Modal = "quality" | "source" | "robust" | "model" | null;
 function readView() {
   const [path, search] = location.hash.slice(1)
     ? location.hash.slice(1).split("?")
@@ -111,6 +123,7 @@ export default function App() {
   const [view, setView] = useState(readView);
   const [dataset, setDataset] = useState<Dataset | null>(demo);
   const [modal, setModal] = useState<Modal>(null);
+  const [forecastOpen, setForecastOpen] = useState(false);
   const [selection, setSelection] = useState<Partial<Record<Sensor, string>>>(
     {},
   );
@@ -159,15 +172,26 @@ export default function App() {
     setBusy(true);
     setError("");
     setStatus("Menyiapkan pemeriksaan lokal…");
-    const w = new Worker(new URL("./import.worker.ts", import.meta.url), {
-      type: "module",
-    });
+    let w: Worker;
+    try {
+      w = new Worker(new URL("./import.worker.ts", import.meta.url), {
+        type: "module",
+      });
+    } catch {
+      setBusy(false);
+      setStatus("");
+      setError(
+        "Browser menolak pemroses berkas lokal. Periksa izin worker lalu coba lagi.",
+      );
+      return;
+    }
     worker.current = w;
     w.onmessage = ({
       data,
     }: {
       data: { type: string; message?: string; dataset?: Dataset };
     }) => {
+      if (worker.current !== w) return;
       if (data.type === "progress") setStatus(data.message ?? "");
       else {
         w.terminate();
@@ -186,6 +210,7 @@ export default function App() {
       }
     };
     w.onerror = () => {
+      if (worker.current !== w) return;
       w.terminate();
       worker.current = null;
       setBusy(false);
@@ -344,21 +369,33 @@ export default function App() {
                     </button>
                   )}
                 </div>
-                <div className="model-unavailable">
-                  <span className="model-mark" aria-hidden="true">
-                    3D
-                  </span>
-                  <h3>Model belum tersedia</h3>
-                  <p>
-                    Unduhan resmi dan lisensi aset turbin belum terverifikasi.
-                    Inspeksi 3D akan tersedia setelah berkas yang sah diperoleh.
-                  </p>
-                  <button onClick={() => setModal("model")}>
-                    Lihat status aset
-                  </button>
-                </div>
+                <ViewerBoundary>
+                  <Suspense fallback={<p role="status">Memuat mesin 3D…</p>}>
+                    <TurbineViewer />
+                  </Suspense>
+                </ViewerBoundary>
                 <p className="model-caption">
-                  Representasi peralatan · bukan kembaran digital Kamojang
+                  Visualisasi turbin uap representatif
+                </p>
+                <p className="model-credit">
+                  “Steam Turbine” oleh{" "}
+                  <a
+                    href="https://sketchfab.com/landinweaver"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    landinweaver
+                  </a>{" "}
+                  ·{" "}
+                  <a
+                    href="https://creativecommons.org/licenses/by/4.0/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    CC BY 4.0
+                  </a>
+                  . Tekstur diperkecil dan geometri dikemas ulang.{" "}
+                  <button onClick={() => setModal("model")}>Kredit aset</button>
                 </p>
               </div>
               <p className="callout">
@@ -393,10 +430,7 @@ export default function App() {
                   <section>
                     <div className="panel chart-panel">
                       <div className="chart-heading">
-                        <h2>
-                          Perubahan{" "}
-                          {parameters[view.sensor].label.toLowerCase()}
-                        </h2>
+                        <h2>{parameters[view.sensor].label}</h2>
                         <span>Satuan: {parameters[view.sensor].unit}</span>
                       </div>
                       <p className="chart-note">
@@ -615,7 +649,7 @@ export default function App() {
                 </ol>
               </section>
               <section className="panel method-panel">
-                <h2>Metode pendeteksian</h2>
+                <h2>Metode analisis</h2>
                 <p>Pemeriksaan historis robust; GPR adalah riset terpisah.</p>
                 <button
                   className="method-choice selected"
@@ -628,9 +662,10 @@ export default function App() {
                 </button>
                 <button
                   className="method-choice"
-                  onClick={() => setModal("gpr")}
+                  onClick={() => setForecastOpen((v) => !v)}
+                  aria-expanded={forecastOpen}
                 >
-                  <strong>GPR · riset</strong>
+                  <strong>GPR · prediksi</strong>
                   <span>Pemodelan prediksi; tidak aktif sebagai detektor</span>
                 </button>
                 <h3>Sensitivitas</h3>
@@ -743,6 +778,10 @@ export default function App() {
             </div>
           </section>
         )}
+        <ForecastPanel
+          dataset={dataset}
+          visible={forecastOpen && view.page === "metode"}
+        />
         <footer>
           {dataset?.synthetic && (
             <strong>Contoh sintetis · bukan data Kamojang. </strong>
@@ -759,7 +798,6 @@ export default function App() {
               quality: "Tinjau kualitas pengukuran",
               source: "Sumber dan kerahasiaan data",
               robust: "Acuan statistik robust",
-              gpr: "GPR masih dievaluasi",
               model: "Status model turbin 3D",
             }[modal]
           }
@@ -844,46 +882,27 @@ export default function App() {
               </p>
             </>
           )}
-          {modal === "gpr" && (
-            <>
-              <p>
-                Gaussian Process Regression merupakan pembanding prediksi dan
-                tidak dijalankan sebagai detektor di aplikasi ini.
-              </p>
-              <p>
-                Eksperimen sumber memakai 36 observasi latih dan 8 observasi uji
-                kronologis, berbeda dari horizon PDF. MAE/RMSE prediksi tidak
-                mengukur akurasi deteksi kerusakan.
-              </p>
-              <p>
-                Pengoptimalan, cakupan interval, dan label kejadian perlu
-                dievaluasi. Gunakan skrip benchmark lokal untuk reproduksi,
-                bukan angka akurasi pada UI.
-              </p>
-            </>
-          )}
           {modal === "model" && (
             <>
               <p>
-                Kandidat:{" "}
+                Steam Turbine oleh landinweaver, berlisensi CC BY 4.0.{" "}
                 <a
                   href="https://sketchfab.com/3d-models/steam-turbine-bcc264eafbe4412d9c061d6d97f30b99"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Steam Turbine oleh landinweaver
+                  Buka karya asli
                 </a>
                 .
               </p>
               <p>
-                Listing menyebut CC Attribution, tetapi berkas belum diperoleh
-                melalui unduhan resmi yang terautentikasi. Versi lisensi, hash,
-                geometri, dan kinerja belum terverifikasi.
+                Arsip diunduh dan diberikan pemilik proyek. Model dioptimalkan:
+                tekstur WebP maksimum 1024 piksel, geometri digabung dan
+                dikompresi Meshopt. Tidak ada animasi rotor yang direkayasa.
               </p>
               <p>
-                Kontrol rotasi, zoom, dan gambar fallback dari model belum
-                tersedia. Tidak ada aset tiruan yang ditampilkan sebagai model
-                3D.
+                Visualisasi turbin uap representatif, bukan kembaran digital
+                atau model mesin aktual Kamojang Unit 5.
               </p>
             </>
           )}

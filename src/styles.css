@@ -256,14 +256,14 @@ main {
 .hero-copy h1 {
   font-size: 77px;
   line-height: 92px;
-  margin-top: 22px;
+  margin-top: 27px;
   margin-left: -5px;
 }
 .hero-body {
   font-size: 23px;
   line-height: 35px;
   color: var(--muted);
-  margin: 38px 0 48px;
+  margin: 33px 0 48px;
   max-width: 570px;
 }
 .hero-actions {
@@ -337,6 +337,7 @@ main {
   overflow-wrap: anywhere;
 }
 .model-stage {
+  position: relative;
   background: linear-gradient(64deg, #183a2d 17%, #0d241c);
   border: 1px solid #3a5c4b;
   border-radius: 15px;
@@ -388,9 +389,125 @@ main {
   border-color: #789489;
 }
 .model-caption {
-  margin: 0 0 10px;
+  margin: 7px 0 4px;
   font-size: 16px;
   color: #c6d5ca;
+}
+.turbine-viewer {
+  position: relative;
+  flex: 1;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+}
+.turbine-canvas {
+  position: absolute;
+  inset: 0 0 115px;
+  cursor: grab;
+  touch-action: none;
+  outline-offset: -4px;
+}
+.turbine-canvas:active {
+  cursor: grabbing;
+}
+.turbine-canvas canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.turbine-controls {
+  margin-top: auto;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+.turbine-controls button,
+.turbine-status button {
+  font-size: 12px;
+  padding: 7px 10px;
+  min-height: 44px;
+  background: #254b3b;
+  color: #fff;
+  border-color: #789489;
+  box-shadow: none;
+}
+.turbine-controls button:hover,
+.turbine-status button:hover {
+  background: #3c5d4d;
+}
+.turbine-instructions {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 8px 0 0;
+  color: #c6d5ca;
+}
+.turbine-status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  padding: 16px;
+}
+.turbine-status img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.65;
+  pointer-events: none;
+}
+.turbine-status p,
+.turbine-status button {
+  position: relative;
+  background: #142b24e8;
+  padding: 10px;
+  border-radius: 7px;
+  max-width: 420px;
+  font-size: 14px;
+}
+.model-credit {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #c6d5ca;
+  margin: 0;
+}
+.model-credit a {
+  color: #e1f0e5;
+}
+.model-credit button {
+  padding: 0 5px;
+  min-height: 28px;
+  border: 0;
+  background: transparent;
+  color: #e1f0e5;
+  font-size: 11px;
+  box-shadow: none;
+  text-decoration: underline;
+}
+@media (max-width: 650px) {
+  .model-stage {
+    height: 630px;
+  }
+  .turbine-canvas {
+    bottom: 175px;
+  }
+  .model-credit {
+    font-size: 11px;
+  }
+  .turbine-controls button {
+    flex: 1;
+    white-space: nowrap;
+  }
+  .turbine-controls {
+    gap: 5px;
+  }
 }
 .callout {
   padding: 15px 23px;
@@ -746,6 +863,37 @@ tr[aria-selected="true"] {
   margin-top: 32px;
   margin-bottom: 24px;
   max-width: 100%;
+}
+.forecast-panel {
+  margin: 24px 0;
+}
+.forecast-panel[hidden] {
+  display: none;
+}
+.forecast-panel .table-scroll {
+  max-height: 540px;
+}
+.forecast-panel h2 {
+  font-size: 31px;
+}
+.forecast-panel p {
+  max-width: 900px;
+}
+.forecast-sensor {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.forecast-sensor select {
+  font: inherit;
+  padding: 10px;
+  min-height: 44px;
+  border: 1px solid #789489;
+  border-radius: 7px;
+  background: white;
+  color: #152721;
 }
 .method-panel .export-actions button:not(.copper) {
   background: #305042;
@@ -1185,5 +1333,71 @@ dialog form button {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+h1,
+h2,
+h3 {
+  letter-spacing: 0;
+}
+@media (min-width: 1450px) {
+  .topbar {
+    margin-left: -2px;
+    width: calc(100% - 14px);
+    padding-left: 3px;
+    padding-right: 3px;
+  }
+  .topbar time {
+    width: 191px;
+    flex: none;
+    text-align: left;
+  }
+}
+@media (min-width: 1500px) {
+  .hero-actions button:first-child {
+    flex: 0 0 248px;
+  }
+  .hero-actions button:nth-child(2) {
+    flex: 0 0 244px;
+  }
+}
+@media (min-width: 651px) {
+  .tabs[aria-label="Parameter"] button:nth-child(1) {
+    width: 132px;
+  }
+  .tabs[aria-label="Parameter"] button:nth-child(2) {
+    width: 112px;
+  }
+  .tabs[aria-label="Parameter"] button:nth-child(3) {
+    width: 173px;
+  }
+  .tabs[aria-label="Parameter"] button:nth-child(4) {
+    width: 112px;
+  }
+  .tabs[aria-label="Parameter"] button:nth-child(5) {
+    width: 157px;
+  }
+}
+.turbine-canvas {
+  bottom: 165px;
+}
+.turbine-instructions {
+  pointer-events: none;
+}
+@media (max-width: 650px) {
+  .model-stage {
+    height: 650px;
+  }
+  .turbine-canvas {
+    bottom: 185px;
+  }
+  .model-credit button {
+    min-height: 44px;
+  }
+  .model-credit {
+    font-size: 12px;
+  }
+  main {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }

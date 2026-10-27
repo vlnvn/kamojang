@@ -1,4 +1,10 @@
-import { dateLabel, format, type Assessment, type Reference } from "./domain";
+import {
+  dateLabel,
+  format,
+  parameters,
+  type Assessment,
+  type Reference,
+} from "./domain";
 export function Chart({
   events,
   reference,
@@ -26,12 +32,29 @@ export function Chart({
     35 + ((Date.parse(d) - start) / (end - start || 1)) * 805;
   const y = (n: number) => 297 - ((n - low) / (high - low)) * 257;
   const years = [...new Set(events.map((a) => a.date.slice(0, 4)))];
+  const ticks =
+    end - start < 366 * 86400000
+      ? [
+          ...new Set([
+            events[0].date,
+            events[Math.floor(events.length / 2)].date,
+            events.at(-1)!.date,
+          ]),
+        ].map((d) => ({
+          date: d,
+          label: new Date(d + "T00:00:00Z").toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "short",
+            timeZone: "UTC",
+          }),
+        }))
+      : years.map((year) => ({ date: `${year}-07-01`, label: year }));
   return (
     <svg
       className="chart"
       viewBox="0 0 850 390"
       role="img"
-      aria-label={`Grafik ${events[0].sensor}, sumbu tanggal aktual; tabel pengukuran tersedia di bawah.`}
+      aria-label={`Grafik ${parameters[events[0].sensor].label} (${events[0].unit}), sumbu tanggal aktual; tabel pengukuran tersedia di bawah.`}
     >
       <title>Pengukuran dan acuan median robust</title>
       <rect
@@ -52,14 +75,13 @@ export function Chart({
           </g>
         );
       })}
-      {years.map((year) => {
-        const d = `${year}-07-01`;
+      {ticks.map(({ date: d, label }) => {
         const px = x(d);
         return px >= 35 && px <= 840 ? (
-          <g key={year}>
+          <g key={d}>
             <line x1={px} x2={px} y1="40" y2="297" stroke="#f1f2ee" />
             <text x={px} y="350" textAnchor="middle">
-              {year}
+              {label}
             </text>
           </g>
         ) : null;

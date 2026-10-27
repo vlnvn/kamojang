@@ -1,22 +1,25 @@
 # Asset provenance
 
-Audit date: 28 October 2026 (Asia/Jakarta). No turbine model has been acquired or redistributed. The genuine-mesh acceptance gate is **BLOCKED**.
+Verified 28 October 2026, Asia/Jakarta. The owner supplied `steam_turbine.zip`; this resolves the earlier authenticated-download blocker. No unofficial downloader or viewer-cache extraction was used. The embedded `license.txt` and glTF `asset.extras` agree on work, author, source and **CC BY 4.0**. The notice permits commercial use with attribution. This is license evidence from the delivered package, not a claim to have independently established the author's title chain.
 
-## Steam Turbine candidate
+## Genuine steam-turbine mesh
 
-- Work: [Steam Turbine](https://sketchfab.com/3d-models/steam-turbine-bcc264eafbe4412d9c061d6d97f30b99)
-- Author shown in the listing: **landinweaver**.
-- Listing metadata found through the official indexed Sketchfab page: CC Attribution, 173.7k triangles, published 29 January 2021. This is listing metadata, not a local mesh inspection.
-- Direct page retrieval returned HTTP 403 in this environment. The official `api.sketchfab.com/v3/models/bcc264eafbe4412d9c061d6d97f30b99/download` request returned HTTP **401**, `Authentication credentials were not provided.`
-- [Official download API guidance](https://sketchfab.com/developers/download-api/guidelines) requires authenticated downloads. No credentials were available, no login was fabricated and no private viewer cache or unofficial download URL was used.
-- Exact license version: **not verified**. Original filename, acquisition date, SHA-256, local bytes, textures, actual geometry, draw calls, load time and FPS: **not available**.
-- Transformations: none. No GLB, glTF, STL, screenshot or substitute turbine vector is shipped.
+- Work: [Steam Turbine](https://sketchfab.com/3d-models/steam-turbine-bcc264eafbe4412d9c061d6d97f30b99), by [landinweaver](https://sketchfab.com/landinweaver).
+- Exact license: [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/). Redistribution and adaptation are allowed subject to credit, license link and indication of modifications. No endorsement is implied.
+- Acquisition: owner-provided archive inspected 2026-10-28; 48,108,578 bytes, 24 members (notice, glTF, binary geometry and 20 images).
+- Original ZIP SHA-256: `e53794fc2548973690a9c38e1d8a04e70aba148ecb85d2cb0082058cace0d3ad`.
+- Original `scene.gltf` SHA-256: `a79974004a6bdd2c2178102d975287b8805a76f8e5e38213b8782c1a65cfb3d5`.
+- Inspected original: 206 nodes, 101 meshes/primitives, 18 materials, 20 textures, **173,703 rendered triangles**, no animations.
+- Two identified backdrop planes only (`Object_44` floor and `Object_46` wall) were removed: four triangles. No turbine geometry simplification was performed.
+- glTF Transform 4.5.1 merges/welds/prunes/instances geometry, limits textures to 1024 px WebP and applies Meshopt compression. Materials are consolidated; texture conversion may change appearance. Original and optimized renders were compared locally.
+- Optimized `public/models/steam-turbine.glb`: **1,215,756 bytes**, SHA-256 `4446fc0d98782dbd343868b578339878ee7a868173f35f04b5620d2637b92591`.
+- Optimized: 17 meshes/primitives, 8 materials, 16 images; 52,645 unique stored triangles and **173,699 rendered triangles after instancing**. These are different counts, not a claimed 70% geometry reduction.
+- Curated, unoptimized source GLB: 52,061,840 bytes, retained privately. Delivered bytes are approximately 97.66% smaller; network timings depend on caching/device.
+- glTF Validator 2.0.0-dev.3.10 reports zero errors and zero warnings for both variants. The optimized report has 45 informational messages, including unsupported extension validation for instancing, Meshopt and WebP. Browser decoding/rendering is verified separately; zero validator errors do not imply complete extension coverage.
 
-A final Windows browser attempt was halted by the Computer Use policy mechanism because it could not determine the current browser URL confidently enough to enforce policy. No further UI automation was attempted. This does not establish that the user's browser is signed into Sketchfab; authenticated acquisition remains unverified.
+`npm run build:model` reproduces conversion from the ignored original archive and writes its manifest and notice. Raw extraction, source preview, validator reports, rendered comparisons and measurements stay in `.private/`. The public source-preview path is explicitly ignored. `scripts/viewer-evidence.mjs` captures the actual rendered optimized mesh and produces its licensed WebP fallback. No generated or flattened imitation of a turbine is substituted.
 
-The [Scottish Maritime Museum turbine-pattern comparator](https://sketchfab.com/3d-models/qe2-starboard-high-pressure-turbine-pattern-8e135c1a917c476a98f011a48c4192c7) also returned HTTP 403 for direct retrieval. It was not adopted: a historical marine casting pattern would need truthful identification and suitability review, in addition to lawful acquisition. Other search results did not supply a verified, appropriate, unauthenticated steam-turbine download; a boiler or wind turbine is not a faithful substitution.
-
-Next gate: obtain a permitted genuine mesh through the official authenticated download or an owner-provided lawful file, verify the individual license/version and redistribution terms, record original filename/hash/date and transformations, then implement loading, PBR lighting, bounded controls, disposal, context loss, 404/slow-loading behavior, actual-mesh fallback and measured optimization/performance. Add visible author/work/license/modification attribution. Do not call it a plant-accurate digital twin. No code license can override mesh licensing obligations.
+The UI and credits dialog show work, author, source, license and modifications; `public/models/LICENSE.txt` carries the delivered notice, and `manifest.json` carries reproducible hashes/statistics. Three.js 0.186.1 and glTF Transform are MIT licensed. The mesh is **representative steam equipment, not Kamojang Unit 5 hardware or a plant-accurate digital twin**. The camera orbits; no rotor animation or simulated operating state is claimed.
 
 ## Fonts
 

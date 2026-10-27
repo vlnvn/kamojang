@@ -1,6 +1,6 @@
 # Kamojang
 
-A local-first interface for historical sensor review and retrospective robust outlier screening, with a separate research forecasting benchmark.
+A local-first interface for historical sensor review and retrospective robust outlier screening, with an executable local research forecasting benchmark and a licensed interactive steam-turbine mesh.
 
 ![Running application with independently generated synthetic measurements](docs/images/analisis.png)
 
@@ -14,7 +14,7 @@ The Indonesian interface explores pressure, temperature, steam quality, non-cond
 - Separate duplicate-date and physical-data review warnings from statistical indications. Uploaded data stays in memory and is discarded on refresh.
 - Navigate responsive overview, analysis and method views with keyboard-accessible dialogs, local fonts and reduced-motion support.
 
-**Incomplete gates:** a legitimately downloaded turbine mesh has not been acquired; the turbine view explains this limitation. Figma visual comparison is measured but does not pass pixel-equivalence. See [testing](docs/testing.md), [design fidelity](docs/design-fidelity.md) and [asset provenance](docs/asset-provenance.md). This is a research prototype, not a safety system.
+**Open acceptance gate:** Figma visual comparison is measured but does not pass full-frame pixel-equivalence. The genuine mesh intentionally replaces the prototype illustration; final visual approval remains pending. See [testing](docs/testing.md), [design fidelity](docs/design-fidelity.md) and [asset provenance](docs/asset-provenance.md). This is a research prototype, not a safety system.
 
 ## Architecture
 
@@ -25,10 +25,11 @@ XLSX / CSV → local worker → strict schema → in-memory measurements
                                               ↓
                              chart + inspector + table + export
 
-Optional Python scripts → independent source audit / GPR research
+Optional loopback Python service → train-only GPR fit → holdout evaluation
+Licensed GLB → lazy Three.js viewer → bounded orbit / actual-mesh fallback
 ```
 
-React 19.3.1, TypeScript 5.9.3 and Vite 8.3.5 provide a static frontend. `read-excel-file` 9.3.12 parses XLSX; `fflate` 0.8.3 guards archive expansion. No database, application API, external telemetry or cloud data storage is required. [Architecture and decisions](docs/architecture.md) explain the boundaries.
+React 19.3.1, TypeScript 5.9.3 and Vite 8.3.5 provide a static frontend. `read-excel-file` 9.3.12 parses XLSX; `fflate` 0.8.3 guards archive expansion. No database, external telemetry or cloud data storage is required. The optional GPR service binds only to loopback; robust screening works without it. [Architecture and decisions](docs/architecture.md) explain the boundaries.
 
 ## Requirements and setup
 
@@ -50,7 +51,18 @@ npm run build
 npm run preview
 ```
 
-All fonts and icons are local. Running a local server with dependencies installed avoids an internet dependency during an exhibition. There is no service worker or guarantee of browser-offline reload support.
+To enable **Metode → GPR · prediksi**, install the pinned research dependencies and start both local processes:
+
+```sh
+python -m pip install -r scripts/requirements-research.txt
+npm run dev:research
+# Or, after building:
+npm run preview:research
+```
+
+Python 3.14.0, NumPy 2.4.4 and scikit-learn 1.9.0 were verified. `KAMOJANG_PYTHON` can select a virtual-environment interpreter. The GPR action fits five models on demand; it requires 12–256 observations and reserves the final eight for testing. Missing dependencies produce an actionable error. Measurements reach only the local process after an explicit request; no cloud service is used.
+
+All fonts, model files and icons are local. Running a local server with dependencies installed avoids an internet dependency during an exhibition. There is no service worker or guarantee of browser-offline reload support.
 
 ## Import and reproduce
 
@@ -64,7 +76,7 @@ Each sensor uses its global historical median and `scale = 1.4826022185 × media
 
 This is in-sample **retrospective screening**, not forecasting or diagnosis. Thresholds have not been calibrated to operating risk. Statistical bounds may be nonphysical, including a negative lower TDS bound. Steam quality above 100% warrants methodological review rather than automatic deletion. No verified incident labels are available, so precision, recall, F1 and failure probabilities cannot be reported.
 
-The optional chronological GPR experiment evaluates forecast MAE/RMSE against median and last-observation baselines, using 36 training and 8 held-out observations for the private source. It is separate from application screening and is not offered as a detector. The source PDF has a different temporal scope and cannot establish performance for this workbook. [Methodology](docs/data-methodology.md) records the evidence and warnings.
+The optional chronological GPR experiment evaluates forecast MAE/RMSE against median and last-observation baselines, using 36 training and 8 held-out observations for the private source. Its metrics and actual/predicted held-out points are available in the application. It remains separate from screening and is not offered as a detector. The source PDF has a different temporal scope and cannot establish performance for this workbook. [Methodology](docs/data-methodology.md) records the evidence and warnings.
 
 ## Testing and CI
 
@@ -73,22 +85,22 @@ npm run format:check
 npm run lint
 npm run typecheck
 npm test
-python -m unittest discover -s scripts -p test_audit.py -v
+python -m unittest discover -s scripts -p 'test_*.py' -v
 npm run build
 npx playwright install chromium
 npm run test:e2e
 npm run scan
 ```
 
-CI installs from the lockfile and runs code, Python, build, browser, responsive and axe checks without confidential inputs. A deliberately optional private-source browser check is skipped publicly. Screenshots and traces are captured on browser failure. [The test matrix](docs/testing.md) distinguishes local results, CI results and outstanding gates; passing automated checks does not close the 3D or pixel-equivalence gates.
+CI installs from the lockfile and runs code, Python, build, browser, responsive and axe checks without confidential inputs. A deliberately optional private-source browser check is skipped publicly. Screenshots and traces are captured on browser failure. [The test matrix](docs/testing.md) distinguishes local results, CI results and outstanding gates; passing automated checks does not establish universal performance or pixel-equivalence. The separate GPR CI job installs research dependencies and exercises actual fitting; the public browser job skips those two service-dependent tests and one private-workbook test.
 
 ## Sources and credits
 
 UI reference: [current Figma design](https://www.figma.com/design/gY9jfZPlSrbRfoo2FwJE81/Untitled?node-id=18-8). The application uses semantic HTML, CSS and computed charts; it does not embed design screenshots. Original prototype turbine vectors are deliberately excluded.
 
-Instrument Sans by the Instrument Sans Project Authors and IBM Plex Sans by IBM are bundled from Fontsource 5.3.0 under SIL OFL 1.1, with licenses in `public/licenses/`. Five interface icons were exported from the supplied Figma design. Dependency licenses are retained in installed packages; no third-party work is relicensed as project code.
+Instrument Sans by the Instrument Sans Project Authors and IBM Plex Sans by IBM are bundled from Fontsource 5.3.0 under SIL OFL 1.1, with licenses in `public/licenses/`. Seven interface icons were exported from the supplied Figma design. Dependency licenses are retained in installed packages; no third-party work is relicensed as project code.
 
-No 3D mesh is distributed. [Steam Turbine by landinweaver](https://sketchfab.com/3d-models/steam-turbine-bcc264eafbe4412d9c061d6d97f30b99) remains a candidate requiring authenticated official acquisition and exact license verification. It must not be represented as Kamojang hardware. See [asset provenance](docs/asset-provenance.md).
+[Steam Turbine by landinweaver](https://sketchfab.com/3d-models/steam-turbine-bcc264eafbe4412d9c061d6d97f30b99) is included under **CC BY 4.0**, verified from the owner-provided archive notice and matching glTF metadata. Changes: backdrop planes removed, instancing/compression and WebP textures; no turbine geometry simplification. Visible attribution and a render from the actual mesh accompany the viewer. It is representative equipment, not a Kamojang digital twin. Three.js is MIT licensed. See [asset provenance](docs/asset-provenance.md).
 
 ## Contributing, security and licensing
 

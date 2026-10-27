@@ -36,6 +36,12 @@ for (const route of ["ringkasan", "analisis", "metode"]) {
     }[route],
   );
   await page.evaluate(() => document.fonts.ready);
+  if (route === "ringkasan")
+    await expect(page.locator(".turbine-viewer")).toHaveAttribute(
+      "data-state",
+      "ready",
+      { timeout: 30000 },
+    );
   await page.screenshot({
     path: path.join(output, `${privateSource ? "actual-" : ""}${route}.png`),
     animations: "disabled",

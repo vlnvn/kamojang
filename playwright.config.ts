@@ -11,9 +11,12 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     viewport: { width: 1600, height: 960 },
+    launchOptions: { args: ["--enable-unsafe-swiftshader"] },
   },
   webServer: {
-    command: "npm run dev -- --port 5173",
+    command: process.env.KAMOJANG_RESEARCH
+      ? "npm run dev:research"
+      : "npm run dev -- --port 5173",
     url: "http://127.0.0.1:5173",
     reuseExistingServer: !process.env.CI,
     timeout: 60000,

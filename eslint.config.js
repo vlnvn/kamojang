@@ -46,6 +46,8 @@ export default tseslint.config(
         Buffer: "readonly",
         document: "readonly",
         performance: "readonly",
+        getComputedStyle: "readonly",
+        requestAnimationFrame: "readonly",
       },
     },
   },
