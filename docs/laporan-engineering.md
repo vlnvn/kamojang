@@ -45,3 +45,7 @@ npm run dev:research
 ```
 
 Gunakan **Metode → GPR · prediksi → Jalankan benchmark GPR**. `npm run dev` tetap menyediakan analisis robust dan 3D tanpa layanan Python. Tidak ada koneksi sensor langsung, akun cloud atau database operasional.
+
+## Bukti publikasi implementasi
+
+Commit implementasi `f6cc2ae` sudah dipush ke branch existing. [CI 40561154745](https://github.com/vlnvn/kamojang/actions/runs/40561154745) lulus ketiga job: kualitas/build, browser/aksesibilitas, serta protokol/keamanan GPR lokal. Clone remote bersih tanpa masukan riset lulus instalasi, kualitas, 17 tes TypeScript, 10 tes Python, build, pemindai 78 path, dan smoke test distribusi produksi dengan GPR lokal/data sintetis. Working tree clone bersih. Perbaikan lanjutan mengarahkan fokus dan scroll ke hasil GPR ketika dibuka; status CI SHA lanjutan yang terbaru tetap dicatat pada PR. PR tetap draft dan tidak digabung.

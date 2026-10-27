@@ -8,6 +8,9 @@ test("research GPR executes actual local fitting, displays holdout metrics and p
   );
   await page.goto("/#/metode");
   await page.getByRole("button", { name: "GPR · prediksi" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Evaluasi prediksi GPR" }),
+  ).toBeInViewport();
   const request = page.waitForResponse((r) =>
     r.url().includes("/api/research/forecast"),
   );

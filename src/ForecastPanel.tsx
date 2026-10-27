@@ -73,6 +73,13 @@ export default function ForecastPanel({
   dataset: Dataset | null;
   visible: boolean;
 }) {
+  const heading = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    if (visible) {
+      heading.current?.focus({ preventScroll: true });
+      heading.current?.scrollIntoView({ block: "start" });
+    }
+  }, [visible]);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState("");
   const [running, setRunning] = useState(false);
@@ -160,7 +167,9 @@ export default function ForecastPanel({
       hidden={!visible}
       aria-labelledby="forecast-title"
     >
-      <h2 id="forecast-title">Evaluasi prediksi GPR</h2>
+      <h2 id="forecast-title" ref={heading} tabIndex={-1}>
+        Evaluasi prediksi GPR
+      </h2>
       <p>
         Uji delapan observasi terakhir terhadap prediksi GPR, median latih, dan
         nilai latih terakhir.{" "}
