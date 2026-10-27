@@ -1,7 +1,10 @@
 import { spawn } from "node:child_process";
 const preview = process.argv.includes("--preview");
 const children = [];
+let stopping = false;
 const stop = () => {
+  if (stopping) return;
+  stopping = true;
   for (const child of children) child.kill();
 };
 const python = spawn(
@@ -33,8 +36,9 @@ const vite = spawn(
 children.push(vite);
 for (const child of children)
   child.on("exit", (code) => {
+    if (stopping) return;
+    process.exitCode = code ?? 1;
     stop();
-    process.exitCode = code ?? 0;
   });
 process.on("SIGINT", stop);
 process.on("SIGTERM", stop);
