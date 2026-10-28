@@ -12,6 +12,8 @@ The public screenshots and sample data are synthetic. No operational Kamojang me
 
 **Development:** [draft PR #1](https://github.com/vlnvn/kamojang/pull/1) on `feat/initial-platform`. The project has not been merged, released or deployed publicly. Functional and CI checks have passed at the documented revision; final design approval, real-device testing and project code licensing remain open. See the [verification matrix](docs/testing.md) for dated evidence and limitations.
 
+Use the implementation branch while the PR is under review; the default branch currently provides the repository overview.
+
 ## What it does
 
 - **Import and validate:** Process CSV and XLSX in a cancellable browser worker; retain source row identifiers, SHA-256 provenance and repeated dates.
