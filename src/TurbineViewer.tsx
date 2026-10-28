@@ -47,7 +47,11 @@ function disposeObject(root: THREE.Object3D) {
   for (const material of materials) material.dispose();
   for (const geometry of geometries) geometry.dispose();
 }
-export default function TurbineViewer() {
+export default function TurbineViewer({
+  inspection = false,
+}: {
+  inspection?: boolean;
+}) {
   const host = useRef<HTMLDivElement>(null);
   const action = useRef<(a: Action) => void>(() => {});
   const rotate = useRef(false);
@@ -59,6 +63,10 @@ export default function TurbineViewer() {
   const [message, setMessage] = useState("Membaca mesh dan tekstur turbin…");
   const [moving, setMoving] = useState(false);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
+  useEffect(() => {
+    if (inspection && state === "ready")
+      host.current?.focus({ preventScroll: true });
+  }, [inspection, state]);
   useEffect(() => {
     rotate.current = moving;
     if (moving) startOrbit.current();
@@ -93,6 +101,13 @@ export default function TurbineViewer() {
     }, 45000);
     const setup = async () => {
       try {
+        // Reject unavailable assets before allocating/compiling the GPU scene.
+        const response = await fetch("/models/steam-turbine.glb", {
+          signal: controller.signal,
+        });
+        if (!response.ok) throw Error(`http:${response.status}`);
+        const bytes = await response.arrayBuffer();
+        if (!alive || controller.signal.aborted) return;
         const canvas = document.createElement("canvas");
         if (
           !canvas.getContext("webgl2", { failIfMajorPerformanceCaveat: false })
@@ -110,7 +125,7 @@ export default function TurbineViewer() {
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.15;
         renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.shadowMap.type = THREE.PCFShadowMap;
         canvas.setAttribute("aria-label", "Mesh turbin uap representatif");
         element.append(canvas);
         scene = new THREE.Scene();
@@ -194,11 +209,6 @@ export default function TurbineViewer() {
           document.removeEventListener("visibilitychange", visibility);
           controls?.removeEventListener("change", render);
         };
-        const response = await fetch("/models/steam-turbine.glb", {
-          signal: controller.signal,
-        });
-        if (!response.ok) throw Error(`http:${response.status}`);
-        const bytes = await response.arrayBuffer();
         const loader = new GLTFLoader();
         const { MeshoptDecoder } =
           await import("three/addons/libs/meshopt_decoder.module.js");

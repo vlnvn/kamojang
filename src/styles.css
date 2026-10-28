@@ -10,6 +10,65 @@
   --graphite: #142b24;
   --copper: #b74121;
 }
+.experiment-launcher,
+.isolation-panel {
+  margin-top: 24px;
+}
+.isolation-panel[hidden] {
+  display: none;
+}
+.isolation-panel h2,
+.experiment-launcher h2 {
+  font-size: 26px;
+}
+.isolation-panel p {
+  line-height: 1.6;
+}
+.isolation-panel fieldset {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 20px 0;
+  min-width: 0;
+  padding: 20px;
+}
+.isolation-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 16px;
+}
+.isolation-inputs label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.isolation-inputs input,
+.isolation-inputs select {
+  font: inherit;
+  min-height: 44px;
+  width: 100%;
+  border: 1px solid #80968a;
+  border-radius: 7px;
+  background: white;
+  color: inherit;
+  padding: 10px;
+}
+.isolation-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+.isolation-toggle input {
+  width: 22px;
+  height: 22px;
+}
+.isolation-panel .table-scroll {
+  margin: 24px 0;
+}
+.isolation-manual-result {
+  border-left: 4px solid var(--forest);
+  padding-left: 20px;
+}
 * {
   box-sizing: border-box;
 }
@@ -243,6 +302,15 @@ main {
   grid-template-columns: minmax(0, 540fr) minmax(0, 695fr);
   gap: 38px;
   padding-top: 35px;
+}
+.overview.turbine-inspection {
+  display: block;
+  padding-top: 24px;
+}
+.overview.turbine-inspection .model-stage {
+  width: 100%;
+  height: min(78vh, 900px);
+  min-height: 650px;
 }
 .hero-copy {
   padding-top: 15px;

@@ -41,7 +41,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         if self.path == '/api/research/health' and self.headers.get('Host') in {f'127.0.0.1:{PORT}', f'localhost:{PORT}'}:
-            self.reply(200, {'service': 'local-gpr', 'protocol': 'gpr-chronological-holdout/1.0.0'})
+            self.reply(200, {'service': 'local-gpr', 'protocol': 'gpr-chronological-holdout/1.0.0', 'supported_protocols': ['gpr-chronological-holdout/1.0.0', 'isolation-reference-holdout/1.0.0']})
         else:
             self.reply(404, {'error': 'Rute tidak tersedia.'})
 
@@ -70,15 +70,20 @@ class Handler(BaseHTTPRequestHandler):
                         CANCELLED.clear()
                     CANCELLED.add(request_id)
                 self.reply(200, {'cancelled': True}); return
-            if self.path != '/api/research/forecast':
+            if self.path not in ('/api/research/forecast', '/api/research/isolation'):
                 self.reply(404, {'error': 'Rute tidak tersedia.'}); return
-            from benchmark import validate_rows
-            rows = validate_rows(data.get('rows'))
+            operation = 'isolation' if self.path.endswith('/isolation') else 'forecast'
+            if operation == 'isolation':
+                from isolation import prepare_request
+                payload = {'operation': operation, **prepare_request(data)}
+            else:
+                from benchmark import validate_rows
+                payload = {'operation': operation, 'rows': validate_rows(data.get('rows'))}
             source_hash = data.get('source_hash')
             if not isinstance(source_hash, str) or len(source_hash) > 128:
                 raise ValueError('Hash sumber tidak valid.')
         except (ValueError, TypeError, json.JSONDecodeError, TimeoutError):
-            self.reply(400, {'error': 'Data GPR tidak valid: 12–256 baris lengkap, angka berhingga, tanggal ISO dan batas latih/uji berbeda tanggal diperlukan.'}); return
+            self.reply(400, {'error': 'Permintaan riset tidak valid. Gunakan 12–256 baris lengkap, identitas unik, angka berhingga, tanggal ISO dan batas latih/uji berbeda tanggal. Periksa juga parameter model serta input manual.'}); return
         if not CAPACITY.acquire(blocking=False):
             self.reply(429, {'error': 'Satu benchmark sedang berjalan. Tunggu atau batalkan proses sebelumnya.'}); return
         process = None
@@ -88,9 +93,9 @@ class Handler(BaseHTTPRequestHandler):
                     self.reply(409, {'error': 'Benchmark dibatalkan.'}); return
                 process = subprocess.Popen([sys.executable, str(Path(__file__).resolve()), '--compute'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=ROOT)
                 JOBS[request_id] = process
-            output, _ = process.communicate(json.dumps(rows).encode(), timeout=60)
+            output, _ = process.communicate(json.dumps(payload).encode(), timeout=60)
             if process.returncode != 0:
-                self.reply(422, {'error': 'Benchmark dihentikan atau dependensi NumPy/scikit-learn belum tersedia. Periksa instalasi riset lokal.'}); return
+                self.reply(422, {'error': 'Komputasi tidak selesai. Periksa dependensi riset, rentang numerik input, atau pembatalan sebelum mencoba kembali.'}); return
             result = json.loads(output)
             result.update(source_hash=source_hash, request_id=request_id)
             self.reply(200, result)
@@ -107,8 +112,13 @@ class Handler(BaseHTTPRequestHandler):
 
 if __name__ == '__main__':
     if '--compute' in sys.argv:
-        from benchmark import benchmark
-        result = benchmark(json.load(sys.stdin))
+        payload = json.load(sys.stdin)
+        if isinstance(payload, dict) and payload.get('operation') == 'isolation':
+            from isolation import experiment
+            result = experiment(payload)
+        else:
+            from benchmark import benchmark
+            result = benchmark(payload['rows'] if isinstance(payload, dict) else payload)
         print(json.dumps(result, allow_nan=False))
     else:
         parser = argparse.ArgumentParser()

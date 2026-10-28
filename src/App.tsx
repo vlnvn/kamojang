@@ -24,8 +24,10 @@ import { demo } from "./demo";
 import { Chart } from "./Chart";
 import ForecastPanel from "./ForecastPanel";
 import ViewerBoundary from "./ViewerBoundary";
+import ResearchBoundary from "./ResearchBoundary";
 
 const TurbineViewer = lazy(() => import("./TurbineViewer"));
+const IsolationPanel = lazy(() => import("./IsolationPanel"));
 
 type Page = "ringkasan" | "analisis" | "metode" | "turbin";
 type Modal = "quality" | "source" | "robust" | "model" | null;
@@ -124,6 +126,8 @@ export default function App() {
   const [dataset, setDataset] = useState<Dataset | null>(demo);
   const [modal, setModal] = useState<Modal>(null);
   const [forecastOpen, setForecastOpen] = useState(false);
+  const [isolationOpen, setIsolationOpen] = useState(false);
+  const [isolationLoaded, setIsolationLoaded] = useState(false);
   const [selection, setSelection] = useState<Partial<Record<Sensor, string>>>(
     {},
   );
@@ -133,6 +137,22 @@ export default function App() {
   const [offline, setOffline] = useState(!navigator.onLine);
   const worker = useRef<Worker | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const inspectionTitle = useRef<HTMLHeadingElement>(null);
+  const modelPanel = useRef<HTMLDivElement>(null);
+  const inspectionTrigger = useRef<HTMLButtonElement | null>(null);
+  const previousPage = useRef(view.page);
+  useEffect(() => {
+    if (view.page === "turbin") {
+      inspectionTitle.current?.focus();
+      inspectionTitle.current?.scrollIntoView({ block: "start" });
+      modelPanel.current
+        ?.querySelector<HTMLElement>('[data-state="ready"] .turbine-canvas')
+        ?.focus({ preventScroll: true });
+    } else if (previousPage.current === "turbin" && view.page === "ringkasan") {
+      inspectionTrigger.current?.focus();
+    }
+    previousPage.current = view.page;
+  }, [view.page]);
   useEffect(() => {
     const changed = () => setView(readView());
     const net = () => setOffline(!navigator.onLine);
@@ -286,7 +306,9 @@ export default function App() {
               ? "Analisis pengukuran"
               : view.page === "metode"
                 ? "Pengaturan analisis"
-                : "Pemantauan historis"}
+                : view.page === "turbin"
+                  ? "Inspeksi turbin 3D"
+                  : "Pemantauan historis"}
           </span>
           <time>
             {new Date().toLocaleDateString("id-ID", {
@@ -303,9 +325,27 @@ export default function App() {
             aplikasi yang sudah tersedia.
           </p>
         )}
+        {view.page === "turbin" && (
+          <div className="page-heading">
+            <h1 ref={inspectionTitle} tabIndex={-1}>
+              Inspeksi turbin 3D
+            </h1>
+            <p>
+              Putar, perbesar, atau atur ulang kamera untuk meninjau mesh turbin
+              uap representatif. Tampilan ini tidak menunjukkan keadaan operasi
+              mesin.
+            </p>
+          </div>
+        )}
         {(view.page === "ringkasan" || view.page === "turbin") && (
-          <div className="overview">
-            <section className="hero-copy">
+          <div
+            className={
+              view.page === "turbin"
+                ? "overview turbine-inspection"
+                : "overview"
+            }
+          >
+            <section className="hero-copy" hidden={view.page === "turbin"}>
               <p className="eyebrow">PLTP Kamojang · Unit 5</p>
               <h1>Kondisi uap.</h1>
               <p className="hero-body">
@@ -319,7 +359,12 @@ export default function App() {
                 >
                   Telusuri pengukuran <Icon name="arrow" />
                 </button>
-                <button onClick={() => navigate("turbin")}>
+                <button
+                  onClick={(e) => {
+                    inspectionTrigger.current = e.currentTarget;
+                    navigate("turbin");
+                  }}
+                >
                   Jelajahi turbin <Icon name="inspect" />
                 </button>
               </div>
@@ -356,7 +401,7 @@ export default function App() {
               </button>
             </section>
             <section className="hero-model">
-              <div className="model-stage">
+              <div className="model-stage" ref={modelPanel}>
                 <div className="model-header">
                   <h2>Sistem turbin uap</h2>
                   {view.page === "turbin" ? (
@@ -364,14 +409,19 @@ export default function App() {
                       ← Ringkasan
                     </button>
                   ) : (
-                    <button onClick={() => navigate("turbin")}>
+                    <button
+                      onClick={(e) => {
+                        inspectionTrigger.current = e.currentTarget;
+                        navigate("turbin");
+                      }}
+                    >
                       Lihat objek
                     </button>
                   )}
                 </div>
                 <ViewerBoundary>
                   <Suspense fallback={<p role="status">Memuat mesin 3D…</p>}>
-                    <TurbineViewer />
+                    <TurbineViewer inspection={view.page === "turbin"} />
                   </Suspense>
                 </ViewerBoundary>
                 <p className="model-caption">
@@ -782,6 +832,38 @@ export default function App() {
           dataset={dataset}
           visible={forecastOpen && view.page === "metode"}
         />
+        {view.page === "metode" && (
+          <section className="panel experiment-launcher">
+            <h2>Eksperimen multivariat</h2>
+            <p>
+              Evaluasi kombinasi lima sensor dan satu pengukuran manual,
+              terpisah dari hasil robust.
+            </p>
+            <button
+              aria-expanded={isolationOpen}
+              onClick={() => {
+                setIsolationLoaded(true);
+                setIsolationOpen((v) => !v);
+              }}
+            >
+              Isolation Forest · riset
+            </button>
+          </section>
+        )}
+        {isolationLoaded && (
+          <div hidden={!isolationOpen || view.page !== "metode"}>
+            <ResearchBoundary>
+              <Suspense
+                fallback={<p role="status">Memuat eksperimen multivariat…</p>}
+              >
+                <IsolationPanel
+                  dataset={dataset}
+                  visible={isolationOpen && view.page === "metode"}
+                />
+              </Suspense>
+            </ResearchBoundary>
+          </div>
+        )}
         <footer>
           {dataset?.synthetic && (
             <strong>Contoh sintetis · bukan data Kamojang. </strong>

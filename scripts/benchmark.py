@@ -8,9 +8,9 @@ from audit_source import KEYS, read_source
 import math
 
 
-def validate_rows(rows):
+def validate_rows(rows, test_rows=8):
     if not isinstance(rows, list) or not 12 <= len(rows) <= 256:
-        raise ValueError('GPR memerlukan 12–256 pembacaan lengkap; delapan observasi terakhir menjadi data uji.')
+        raise ValueError('Analisis riset memerlukan 12–256 pembacaan lengkap dan pemisahan waktu yang jelas.')
     clean = []
     for i, row in enumerate(rows):
         if not isinstance(row, dict) or not isinstance(row.get('date'), str):
@@ -19,11 +19,16 @@ def validate_rows(rows):
         if day.isoformat() != row['date']:
             raise ValueError(f'Baris {i+1}: gunakan tanggal ISO.')
         values = {k: row.get(k) for k in KEYS}
-        if any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or abs(v) > 1e50 for v in values.values()):
+        if any(isinstance(v, bool) or not isinstance(v, (int, float)) or abs(v) > 1e50 or not math.isfinite(v) for v in values.values()):
             raise ValueError(f'Baris {i+1}: lima angka berhingga diperlukan.')
-        clean.append({'date': day.isoformat(), 'source_excel_row': row.get('source_excel_row', i+1), **values})
+        source_row = row.get('source_excel_row', i+1)
+        if isinstance(source_row, bool) or not isinstance(source_row, int) or not 1 <= source_row <= 1000000000:
+            raise ValueError('Identitas baris sumber tidak valid.')
+        clean.append({'date': day.isoformat(), 'source_excel_row': source_row, **values})
+    if len({r['source_excel_row'] for r in clean}) != len(clean):
+        raise ValueError('Identitas baris sumber harus unik.')
     clean.sort(key=lambda r:(r['date'], r['source_excel_row']))
-    if clean[-9]['date'] >= clean[-8]['date']:
+    if clean[-test_rows-1]['date'] >= clean[-test_rows]['date']:
         raise ValueError('Batas latih/uji memisahkan tanggal yang sama. Unggah rentang dengan batas tanggal kronologis yang jelas.')
     return clean
 

@@ -37,3 +37,7 @@ Font files are resolved locally from package imports; no font CDN is needed at r
 Seven SVG icons were exported from the supplied current Figma design: overview `38:5`, analysis `38:10`, methods `38:13`, inspect `38:17`, arrow `72:20`, source review `67:5`, and quality review `38:32`. They are used as interface assets at their intended sizes; no temporary MCP asset URL remains in runtime code. Their origin is the user-supplied design, not a newly asserted third-party open license. No pseudo-3D turbine or flattened chart asset is included.
 
 Public screenshots under `docs/images/` show the actual running application with the independently generated synthetic fixture. Current Figma reference images, private-workbook screenshots, overlays and differences remain under ignored `.private/visual/`. They must not be committed without the necessary rights.
+
+## Comparison implementation boundary
+
+The multivariate capability review used hamzbriel/sensor-anomaly-detection at 2c72d1d7b09995947548e5d74c4eb1853566fd80. No explicit code license was present in that tree. Only product ideas were adopted; the estimator integration was written independently from primary research and the public scikit-learn API. No source code, workbook, cached results or Streamlit assets from that repository are shipped. Synthetic research and expanded-view screenshots were captured from this application. The turbine GLB/license/manifest are unchanged by the navigation extension.

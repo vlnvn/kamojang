@@ -2,7 +2,7 @@
 
 Historical sensor analysis for geothermal process measurements.
 
-Kamojang is an Indonesian-language web application for inspecting time-series observations, reviewing data quality and identifying statistical deviations. It includes a self-hosted, attributed 3D steam-turbine viewer and an optional local Gaussian Process Regression (GPR) forecasting workflow. The application operates on historical files; it is not connected to field sensors.
+Kamojang is an Indonesian-language web application for inspecting time-series observations, reviewing data quality and identifying statistical deviations. It includes a self-hosted, attributed 3D steam-turbine viewer and optional local GPR forecasting and multivariate Isolation Forest research workflows. The application operates on historical files; it is not connected to field sensors.
 
 ![Analysis screen with independently generated synthetic measurements](docs/images/analisis.png)
 
@@ -20,6 +20,8 @@ The public screenshots and sample data are synthetic. No operational Kamojang me
 - **Inspect equipment context:** View an optimized, licensed steam-turbine model with bounded camera controls, keyboard/touch support and a static fallback. The model is representative equipment, not a digital twin of Kamojang Unit 5.
 - **Evaluate forecasts:** Optionally run GPR and two forecasting baselines through a Python service bound to localhost. This is a forecasting experiment, not an equipment-failure classifier.
 
+- **Explore joint patterns:** Run an opt-in Isolation Forest with explicit model settings, separate reference/holdout results and a manual candidate that never becomes training data. See the [multivariate workflow](docs/multivariate-research.md).
+
 The robust screening workflow works without Python. Uploaded files remain in memory and are discarded on refresh; exports must be protected to the same standard as their source.
 
 ## Get started
@@ -36,7 +38,7 @@ npm run dev
 
 Open the local URL printed by Vite. The built-in example uses synthetic measurements; it does not require the private research workbook.
 
-To run the optional GPR workflow, install the pinned Python dependencies and launch the combined local frontend and research service:
+To run the optional GPR and multivariate workflows, install the pinned Python dependencies and launch the combined local frontend and research service:
 
 ```sh
 python -m pip install -r scripts/requirements-research.txt
@@ -56,7 +58,7 @@ Browser import worker ---> schema, limits and data-quality checks
     v
 In-memory measurements ---> median/MAD scoring ---> chart, inspector, export
     |
-    +-- explicit request --> loopback Python service --> GPR holdout evaluation
+    +-- explicit request --> loopback Python service --> GPR / Isolation Forest experiments
 
 Self-hosted CC BY 4.0 turbine GLB --> lazy Three.js viewer --> static fallback
 ```
@@ -65,7 +67,7 @@ The frontend uses React, TypeScript and Vite. The robust estimator is implemente
 
 ## Verification
 
-The recorded development checks include 17 TypeScript tests, 10 Python tests, 22 public browser tests and three actual-service GPR browser tests. CI runs quality/build, browser/accessibility and local-GPR/security jobs. The private-workbook parity check is separate and cannot run in public CI.
+The recorded development checks include 20 TypeScript tests and 16 Python tests, plus separate public and actual-service browser suites (dated results in the verification matrix). CI runs quality/build, browser/accessibility and local-GPR/security jobs. The private-workbook parity check is separate and cannot run in public CI.
 
 ```sh
 npm run format:check
@@ -83,15 +85,15 @@ These commands do not replace asset licensing review or real-device testing. The
 
 ## Documentation
 
-| Topic | Document |
-| --- | --- |
-| Documentation guide | [Start here](docs/README.md) |
-| System boundaries and component responsibilities | [Architecture](docs/architecture.md) |
-| Data contract, estimator and reproduction | [Data methodology](docs/data-methodology.md) |
-| 3D source, license and modifications | [Asset provenance](docs/asset-provenance.md) |
-| Tests, CI evidence and limitations | [Verification matrix](docs/testing.md) |
-| Visual regression and Figma comparisons | [Design fidelity](docs/design-fidelity.md) |
-| Engineering record (Indonesian) | [Laporan engineering](docs/laporan-engineering.md) |
+| Topic                                            | Document                                           |
+| ------------------------------------------------ | -------------------------------------------------- |
+| Documentation guide                              | [Start here](docs/README.md)                       |
+| System boundaries and component responsibilities | [Architecture](docs/architecture.md)               |
+| Data contract, estimator and reproduction        | [Data methodology](docs/data-methodology.md)       |
+| 3D source, license and modifications             | [Asset provenance](docs/asset-provenance.md)       |
+| Tests, CI evidence and limitations               | [Verification matrix](docs/testing.md)             |
+| Visual regression and Figma comparisons          | [Design fidelity](docs/design-fidelity.md)         |
+| Engineering record (Indonesian)                  | [Laporan engineering](docs/laporan-engineering.md) |
 
 ## Credits and rights
 

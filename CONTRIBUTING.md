@@ -13,13 +13,14 @@ npm ci
 npm run dev
 ```
 
-The optional GPR path requires the pinned Python dependencies and `npm run dev:research`. The default browser-only screening must remain usable when Python or WebGL is unavailable.
+The optional GPR and multivariate paths require the pinned Python dependencies and `npm run dev:research`. The default browser-only screening must remain usable when Python or WebGL is unavailable.
 
 ## Change boundaries
 
 - Keep scoring and source identity logic in `src/domain.ts`; do not hardcode source measurements or introduce a second inconsistent scorer.
 - Keep import parsing, limits and validation in `src/import.ts` and the worker. Preserve source rows, repeated dates and hash provenance.
 - Keep GPR forecasting separate from retrospective anomaly screening. Forecast MAE and RMSE cannot be presented as fault-detection accuracy.
+- Keep Isolation Forest outputs in the separate research protocol; never overwrite robust flags or claim manual candidates train the model. Test train-only preprocessing and result invalidation.
 - Keep the 3D model's attribution, licensing and integrity record synchronized with any changes to model geometry, material, texture or packaging.
 - Maintain keyboard access, mobile layout, reduced-motion support and failure handling when changing presentation components.
 - Make documentation changes in the same pull request as the behavior they describe.
@@ -60,6 +61,7 @@ Do not invent commit history, co-authors, benchmarks or validation claims. Prefe
 Before a push, stage explicit paths, inspect `git diff --cached` and run `npm run scan -- --staged`. Review the outgoing Git history as well. The scanner is a bounded guard, not a proof that secrets are absent.
 
 A useful pull request contains:
+
 - What changed and why, referencing the relevant issue or decision.
 - How the change was tested, including actual commands, results and skipped checks.
 - Before/after screenshots for visual changes, using only public synthetic data.

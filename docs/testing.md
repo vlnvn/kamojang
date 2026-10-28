@@ -2,6 +2,10 @@
 
 Verified locally 28 October 2026, Asia/Jakarta: Windows, Node 24.11.0, npm 11.6.1, Python 3.14.0, Chromium 156.0.8078.4 / Playwright 1.64.1. These are observed engineering checks, not production certification.
 
+## Earlier implementation record
+
+The following table records the previous 68071b9 implementation. Current enhancement evidence is appended below; older passes do not imply later changes passed.
+
 | Gate                                                            | Status                 | Evidence                                                                                                                                                                                                                   |
 | --------------------------------------------------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | TypeScript unit tests                                           | PASS                   | `npm test`: 17 tests, including unchanged parser/scorer cases and shipped model hash/license/geometry manifest checks                                                                                                      |
@@ -44,3 +48,25 @@ The later run `40561862355` at `f6ab141` exposed a test synchronization failure:
 The repeated-resource test retains five per-load 30-second readiness limits and all resource assertions; its overall budget is 180 seconds to encompass those five real software-GPU initialization cycles plus interactions. The failed runner had taken 84 seconds for that workload, close to the former unrelated 90-second total. This changes correctness-test scheduling, not the recorded physical-device performance requirements.
 
 A missing-interpreter launcher probe also passed: an intentionally nonexistent `KAMOJANG_PYTHON` produces a nonzero process exit and actionable Indonesian diagnostic. Shutdown is idempotent and child-exit cleanup cannot overwrite the original failure status. Normal combined service startup is exercised by the GPR CI job.
+
+## Multivariate and turbine-navigation enhancement (28 October 2026)
+
+Baseline branch was fast-forwarded from 68071b9 to the existing remote e426dc0 before editing. Its remote CI 40623366443 failed only formatting; browser and research jobs passed. The three recently edited Markdown documents were formatted while preserving their new organization. Baseline local 17 TypeScript / 10 Python tests and 22 public browser tests passed before implementation.
+
+| Check                               | Observed result                                                                                                                                                                                                                                   |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Current TypeScript unit suite       | PASS: 20 tests, including source-aligned response validation and safe scoped exports                                                                                                                                                              |
+| Current Python suite                | PASS: 16 tests; manual non-training, no holdout leakage, independent sensitivity fits, tied scores and unrepresentable numeric rejection                                                                                                          |
+| Private robust parity               | PASS: all 220 values/scores/flags and 9/7/6 counts unchanged                                                                                                                                                                                      |
+| Private GPR API parity              | PASS: all 15 archived MAE/RMSE pairs, two optimizer warnings retained                                                                                                                                                                             |
+| Independent reference comparison    | PASS: 44 in-sample and 9 holdout decisions/scores match the inspected comparison implementation at its five-decimal precision; no per-row outputs published                                                                                       |
+| New UI flow                         | Actual fitting, manual result, both exports and navigation passed in the first isolated six-test run; label/focus failures were corrected before that pass                                                                                        |
+| Current Windows export finalization | BLOCKED locally: later Chromium runs receive all bytes but do not complete downloads, including unchanged baseline 68071b9 served on a separate port. No security setting was disabled. Root cause of the browser finalization is not established |
+| Expanded 3D / failed asset          | The route is visibly larger, both entry buttons and focus return are tested; 404 is rejected before GPU compilation and isolated recovery passed                                                                                                  |
+| CI / release                        | Exact-head results are recorded on existing draft PR #1. No merge or deployment is authorized                                                                                                                                                     |
+
+During investigation two overlapping Playwright commands caused shared-artifact ENOENT errors; these were runner collisions, not successful tests. Follow-up probes used separate output folders and no overlapping runner. No failed or skipped check is counted as a pass. The Windows export blockage is distinct from generated payload correctness and must be reported alongside independent Linux CI export results.
+
+The new multivariate component is loaded only when explicitly opened and has its own module-error boundary. The default main chunk is approximately 257.48 kB / 80.85 kB gzip (baseline 255.42 / 80.38 kB); its separate panel chunk is 11.87 kB / 4.52 kB gzip. No runtime dependency or lockfile change is introduced. The importer worker and GLB hash remain unchanged. The pre-existing large Three.js chunk warning remains visible.
+
+Expanded inspection production sample: Intel UHD D3D11, Chromium 156.0.8078.4; 1600×960 DPR 1 load 1,641.9 ms, 170 RAF intervals over 3,566.534 ms = 47.665 Hz, p95 16.7 ms and click-to-two-RAF 24.3 ms. Emulated 430×932 DPR 2 / renderer 1.5: load 418.6 ms, 181 intervals / 3,016.534 ms = 60.003 Hz, p95 16.7 ms, click 24.0 ms. The desktop sample contains a stall; no stable 60 FPS or causal performance improvement is asserted. All reported page-error arrays were empty. Later code splitting changes the default bundle, not model geometry or shader settings. These remain local lab observations, not field or real-phone measurements.
