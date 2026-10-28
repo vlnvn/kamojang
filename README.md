@@ -1,28 +1,33 @@
 # Kamojang
 
-An Indonesian-language application for inspecting historical geothermal sensor measurements, reviewing data quality and screening retrospective statistical deviations.
+Historical sensor analysis for geothermal process measurements.
 
-**Development status:** the implemented application is available in [draft PR #1](https://github.com/vlnvn/kamojang/pull/1) on `feat/initial-platform`. The default `main` branch remains the project baseline until the implementation is approved and merged. There is no public deployment or tagged release.
+Kamojang is an Indonesian-language web application for inspecting time-series observations, reviewing data quality and identifying statistical deviations. It includes a self-hosted, attributed 3D steam-turbine viewer and optional local GPR forecasting and multivariate Isolation Forest research workflows. The application operates on historical files; it is not connected to field sensors.
 
-![Kamojang interface with independently generated synthetic measurements](https://raw.githubusercontent.com/vlnvn/kamojang/feat/initial-platform/docs/images/ringkasan.png)
+![Analysis screen with independently generated synthetic measurements](docs/images/analisis.png)
 
-*The screenshot uses synthetic measurements. No confidential Kamojang data appears in this repository.*
+The public screenshots and sample data are synthetic. No operational Kamojang measurements are distributed with this repository.
 
-## Current implementation
+## Project status
 
-The PR branch contains:
+**Development:** [draft PR #1](https://github.com/vlnvn/kamojang/pull/1) on `feat/initial-platform`. The project has not been merged, released or deployed publicly. Functional and CI checks have passed at the documented revision; final design approval, real-device testing and project code licensing remain open. See the [verification matrix](docs/testing.md) for dated evidence and limitations.
 
-- Local CSV/XLSX import with schema checks, provenance, preserved duplicate dates and cancellable worker processing.
-- Time-scaled review of pressure, temperature, steam quality, NCG and TDS, with a keyboard-accessible table and source-row inspector.
-- Recomputed median/MAD screening, sensitivity controls and CSV/JSON exports.
-- A self-hosted, attributed CC BY 4.0 steam-turbine model with interactive camera controls and failure fallback.
-- Optional Gaussian Process Regression forecasting through a loopback-only Python service.
+Use the implementation branch while the PR is under review; the default branch currently provides the repository overview.
 
-The application uses historical files, not live telemetry. Retrospective deviation flags do not establish equipment faults. GPR reports forecasting evaluation, not diagnostic accuracy.
+## What it does
 
-## Run the application
+- **Import and validate:** Process CSV and XLSX in a cancellable browser worker; retain source row identifiers, SHA-256 provenance and repeated dates.
+- **Inspect measurements:** Explore pressure, temperature, steam quality, non-condensable gases (NCG) and total dissolved solids (TDS) on a continuous time axis, with a keyboard-accessible table and row inspector.
+- **Screen deviations:** Recompute retrospective median/MAD scores at thresholds of 3.0, 3.5 or 4.0. Keep quality warnings separate from statistical flags. Export assessments as CSV or JSON.
+- **Inspect equipment context:** View an optimized, licensed steam-turbine model with bounded camera controls, keyboard/touch support and a static fallback. The model is representative equipment, not a digital twin of Kamojang Unit 5.
+- **Evaluate forecasts:** Optionally run GPR and two forecasting baselines through a Python service bound to localhost. This is a forecasting experiment, not an equipment-failure classifier.
+- **Explore joint patterns:** Run an opt-in five-sensor Isolation Forest with contamination and tree-count controls, independent reference and chronological holdout results, and manual candidate scoring without refitting. See the [multivariate workflow](docs/multivariate-research.md).
 
-Use Node.js 24.11.0 and npm 11.6.1, as recorded in the implementation's verification environment:
+The robust screening workflow works without Python. Uploaded files remain in memory and are discarded on refresh; exports must be protected to the same standard as their source.
+
+## Get started
+
+Verified development environment: Node.js 24.11.0 and npm 11.6.1.
 
 ```sh
 git clone https://github.com/vlnvn/kamojang.git
@@ -32,33 +37,75 @@ npm ci
 npm run dev
 ```
 
-The built-in sample uses independently generated synthetic readings and does not require private research files. For the optional local GPR service:
+Open the local URL printed by Vite. The built-in example uses synthetic measurements; it does not require the private research workbook.
+
+To run the optional GPR and multivariate workflows, install the pinned Python dependencies and launch the combined local frontend and research service:
 
 ```sh
 python -m pip install -r scripts/requirements-research.txt
 npm run dev:research
 ```
 
-The research service runs on localhost only. It must not be deployed as a public API.
+The optional service binds to `127.0.0.1:8341` and only processes measurements after an explicit user action. Do not expose it publicly. Static hosting does not provide this service.
 
-## Documentation and verification
+## Architecture
 
-The following links point to the implementation branch, because these files are not yet part of `main`:
+```text
+CSV / XLSX
+    |
+    v
+Browser import worker ---> schema, limits and data-quality checks
+    |
+    v
+In-memory measurements ---> median/MAD scoring ---> chart, inspector, export
+    |
+    +-- explicit request --> loopback Python service --> GPR / Isolation Forest experiments
 
-- [Full README and architecture overview](https://github.com/vlnvn/kamojang/blob/feat/initial-platform/README.md)
-- [Documentation index](https://github.com/vlnvn/kamojang/blob/feat/initial-platform/docs/README.md)
-- [Data methodology](https://github.com/vlnvn/kamojang/blob/feat/initial-platform/docs/data-methodology.md)
-- [3D asset provenance and attribution](https://github.com/vlnvn/kamojang/blob/feat/initial-platform/docs/asset-provenance.md)
-- [Verification matrix and CI boundaries](https://github.com/vlnvn/kamojang/blob/feat/initial-platform/docs/testing.md)
-- [Design fidelity and remaining signoff](https://github.com/vlnvn/kamojang/blob/feat/initial-platform/docs/design-fidelity.md)
-- [Engineering report (Indonesian)](https://github.com/vlnvn/kamojang/blob/feat/initial-platform/docs/laporan-engineering.md)
+Self-hosted CC BY 4.0 turbine GLB --> lazy Three.js viewer --> static fallback
+```
 
-The implementation PR has documented passing unit, browser, production-build and research-service checks. Final visual approval, real-device and assistive-technology testing, and project code licensing remain unresolved. GitHub Actions results apply only to the commit on which they ran.
+The frontend uses React, TypeScript and Vite. The robust estimator is implemented in TypeScript and verified independently in Python. No account system, database, cloud upload or live telemetry backend is provided. See the [architecture](docs/architecture.md), [data methodology](docs/data-methodology.md) and [ADR 0002](docs/decisions/0002-genuine-viewer-and-local-gpr.md).
 
-## Rights and maintenance
+## Verification
 
-The included steam-turbine asset is by [landinweaver](https://sketchfab.com/landinweaver) under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); the implementation branch documents its modifications and notice. Fonts have separate SIL OFL licenses. Original research inputs and outputs containing real measurements are not published.
+The recorded development checks include 20 TypeScript tests and 24 Python tests, plus separate public and actual-service browser suites (dated results in the verification matrix). CI runs quality/build, browser/accessibility and local-research/security jobs. The private-workbook parity check is separate and cannot run in public CI.
 
-**No software license has yet been granted for the project source code.** Public repository access does not imply permission to reuse it. Kamojang is research software, not a certified industrial safety or maintenance system.
+```sh
+npm run format:check
+npm run lint
+npm run typecheck
+npm test
+python -m unittest discover -s scripts -p 'test_*.py' -v
+npm run build
+npx playwright install chromium
+npm run test:e2e
+npm run scan
+```
 
-Maintained by [vlnvn](https://github.com/vlnvn). Contributions and security guidance are in the linked implementation documentation.
+These commands do not replace asset licensing review or real-device testing. The most recent documented full-frame Figma comparisons remain outside pixel equivalence, and owner visual approval is pending. Refer to [test evidence](docs/testing.md) and [design fidelity](docs/design-fidelity.md) rather than treating CI success as production certification.
+
+## Documentation
+
+| Topic                                                | Document                                               |
+| ---------------------------------------------------- | ------------------------------------------------------ |
+| Documentation guide                                  | [Start here](docs/README.md)                           |
+| System boundaries and component responsibilities     | [Architecture](docs/architecture.md)                   |
+| Data contract, estimator and reproduction            | [Data methodology](docs/data-methodology.md)           |
+| Joint-sensor experiment and its limitations          | [Multivariate research](docs/multivariate-research.md) |
+| Compare the three methods without inventing accuracy | [Model audit](docs/model-audit.md)                     |
+| 3D source, license and modifications                 | [Asset provenance](docs/asset-provenance.md)           |
+| Tests, CI evidence and limitations                   | [Verification matrix](docs/testing.md)                 |
+| Visual regression and Figma comparisons              | [Design fidelity](docs/design-fidelity.md)             |
+| Engineering record (Indonesian)                      | [Laporan engineering](docs/laporan-engineering.md)     |
+
+## Credits and rights
+
+The [Steam Turbine](https://sketchfab.com/3d-models/steam-turbine-bcc264eafbe4412d9c061d6d97f30b99) model is by **landinweaver**, distributed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). The application records attribution and modifications in [asset provenance](docs/asset-provenance.md) and `public/models/LICENSE.txt`. Instrument Sans and IBM Plex Sans use SIL OFL 1.1; font notices are included in `public/licenses/`.
+
+The source workbook, research report, original research archive and measurement-bearing outputs are not published. Permission to run an analysis does not grant permission to redistribute its inputs.
+
+The repository's **code license has not been selected**. Public visibility does not grant reuse rights to the source code. This application has not been validated for safety-critical decisions.
+
+## Contributing and security
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for changes, tests and review requirements, and [SECURITY.md](SECURITY.md) for vulnerability reporting and handling of sensitive inputs. Maintained by [vlnvn](https://github.com/vlnvn).

@@ -10,7 +10,11 @@ __pycache__/
 *.pdf
 *.zip
 CODEX_MASTERPROMPT_KAMOJANG.md
+KAMOJANG_CODEX_CONTINUATION_3D_VISUAL_QUALITY.md
+public/models/source-preview.glb
 playwright-report/
 test-results/
 coverage/
 *.local
+*.tsbuildinfo
+docs/images/browser-metrics.json

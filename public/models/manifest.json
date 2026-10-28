@@ -1,0 +1,49 @@
+{
+  "title": "Steam Turbine",
+  "author": "landinweaver",
+  "author_url": "https://sketchfab.com/landinweaver",
+  "license": "CC-BY-4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "acquired": "2026-10-28",
+  "acquisition": "Owner-provided downloaded steam_turbine.zip with matching embedded source/author/license metadata",
+  "original_archive": "steam_turbine.zip",
+  "archive_sha256": "e53794fc2548973690a9c38e1d8a04e70aba148ecb85d2cb0082058cace0d3ad",
+  "source_gltf_sha256": "a79974004a6bdd2c2178102d975287b8805a76f8e5e38213b8782c1a65cfb3d5",
+  "source_glb_bytes": 52061840,
+  "source_url": "https://sketchfab.com/3d-models/steam-turbine-bcc264eafbe4412d9c061d6d97f30b99",
+  "original_stats": {
+    "rendered_triangles": 173703,
+    "nodes": 206,
+    "meshes": 101,
+    "materials": 18,
+    "textures": 20,
+    "primitives": 101,
+    "triangles": 173703,
+    "extensions": []
+  },
+  "optimized_stats": {
+    "rendered_triangles": 173699,
+    "nodes": 17,
+    "meshes": 17,
+    "materials": 8,
+    "textures": 16,
+    "primitives": 17,
+    "triangles": 52645,
+    "extensions": [
+      "EXT_mesh_gpu_instancing",
+      "EXT_meshopt_compression",
+      "EXT_texture_webp",
+      "KHR_mesh_quantization"
+    ]
+  },
+  "file": "/models/steam-turbine.glb",
+  "bytes": 1215756,
+  "sha256": "4446fc0d98782dbd343868b578339878ee7a868173f35f04b5620d2637b92591",
+  "transformations": "glTF Transform 4.5.1: merge/weld/prune/instance; remove only the identified backdrop wall/floor planes Object_44/Object_46; no turbine mesh simplification; maximum 1024px WebP textures; Meshopt compression. Materials and geometry retained; representative equipment, not a Kamojang digital twin.",
+  "validation": {
+    "source_errors": 0,
+    "source_warnings": 0,
+    "optimized_errors": 0,
+    "optimized_warnings": 0
+  }
+}
