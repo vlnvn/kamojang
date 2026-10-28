@@ -40,8 +40,8 @@ Use `npm ci` before running local checks. The CI workflow is `/.github/workflows
 
 ## Current release boundary
 
-The application code is on [draft PR #1](https://github.com/vlnvn/kamojang/pull/1), not the default `main` branch. The verified turbine viewer and optional GPR integration are available in that branch. Final visual approval, software licensing and real-device/assistive-technology testing remain unresolved. There is no public deployment or released version.
+The application code is on [draft PR #1](https://github.com/vlnvn/kamojang/pull/1), not the default `main` branch. The branch includes the attributed turbine viewer, optional GPR forecasting, and a separate Isolation Forest experiment for joint sensor screening and manual candidate evaluation. Final visual approval, software licensing and real-device/assistive-technology testing remain unresolved. There is no public deployment or released version.
 
-The screening method flags retrospective statistical deviations; it is not a validated diagnostic or predictive maintenance system. Forecast evaluation metrics are not fault-detection accuracy.
+Median/MAD and Isolation Forest flag retrospective statistical deviations; neither is a validated fault classifier. The Isolation Forest contamination setting is not measured fault prevalence or a calibrated alarm rate. GPR forecast errors are not fault-detection accuracy. See the [multivariate research contract](multivariate-research.md) for training and holdout boundaries.
 
 For historical verification details, follow the dated testing record instead of assuming the status of an older commit still applies.
