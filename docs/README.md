@@ -17,14 +17,15 @@ The public examples use generated synthetic measurements. The original workbook 
 
 ## Understand the system
 
-| Reference                                                    | Contents                                                                           |
-| ------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| [Architecture](architecture.md)                              | Import worker, state, scoring, viewer, localhost service and trust boundaries      |
-| [ADR 0001](decisions/0001-local-analysis.md)                 | Why robust screening runs in the browser                                           |
-| [ADR 0002](decisions/0002-genuine-viewer-and-local-gpr.md)   | Why the turbine asset is self-hosted and GPR runs through optional loopback Python |
-| [ADR 0003](decisions/0003-separate-multivariate-research.md) | Why multivariate research is separate from robust scores and GPR                   |
-| [Data methodology](data-methodology.md)                      | Source precedence, robust estimator, edge cases and forecasting protocol           |
-| [Asset provenance](asset-provenance.md)                      | Source, license, integrity hashes, model optimization and rendering limitations    |
+| Reference                                                    | Contents                                                                               |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| [Architecture](architecture.md)                              | Import worker, state, scoring, viewer, localhost service and trust boundaries          |
+| [ADR 0001](decisions/0001-local-analysis.md)                 | Why robust screening runs in the browser                                               |
+| [ADR 0002](decisions/0002-genuine-viewer-and-local-gpr.md)   | Why the turbine asset is self-hosted and GPR runs through optional loopback Python     |
+| [ADR 0003](decisions/0003-separate-multivariate-research.md) | Why multivariate research is separate from robust scores and GPR                       |
+| [Data methodology](data-methodology.md)                      | Source precedence, robust estimator, edge cases and forecasting protocol               |
+| [Model audit](model-audit.md)                                | Matched chronological comparisons, suitability decisions and limits on accuracy claims |
+| [Asset provenance](asset-provenance.md)                      | Source, license, integrity hashes, model optimization and rendering limitations        |
 
 ## Verify a change
 

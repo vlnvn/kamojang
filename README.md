@@ -68,7 +68,7 @@ The frontend uses React, TypeScript and Vite. The robust estimator is implemente
 
 ## Verification
 
-The recorded development checks include 20 TypeScript tests and 16 Python tests, plus separate public and actual-service browser suites (dated results in the verification matrix). CI runs quality/build, browser/accessibility and local-research/security jobs. The private-workbook parity check is separate and cannot run in public CI.
+The recorded development checks include 20 TypeScript tests and 24 Python tests, plus separate public and actual-service browser suites (dated results in the verification matrix). CI runs quality/build, browser/accessibility and local-research/security jobs. The private-workbook parity check is separate and cannot run in public CI.
 
 ```sh
 npm run format:check
@@ -86,16 +86,17 @@ These commands do not replace asset licensing review or real-device testing. The
 
 ## Documentation
 
-| Topic                                            | Document                                               |
-| ------------------------------------------------ | ------------------------------------------------------ |
-| Documentation guide                              | [Start here](docs/README.md)                           |
-| System boundaries and component responsibilities | [Architecture](docs/architecture.md)                   |
-| Data contract, estimator and reproduction        | [Data methodology](docs/data-methodology.md)           |
-| Joint-sensor experiment and its limitations      | [Multivariate research](docs/multivariate-research.md) |
-| 3D source, license and modifications             | [Asset provenance](docs/asset-provenance.md)           |
-| Tests, CI evidence and limitations               | [Verification matrix](docs/testing.md)                 |
-| Visual regression and Figma comparisons          | [Design fidelity](docs/design-fidelity.md)             |
-| Engineering record (Indonesian)                  | [Laporan engineering](docs/laporan-engineering.md)     |
+| Topic                                                | Document                                               |
+| ---------------------------------------------------- | ------------------------------------------------------ |
+| Documentation guide                                  | [Start here](docs/README.md)                           |
+| System boundaries and component responsibilities     | [Architecture](docs/architecture.md)                   |
+| Data contract, estimator and reproduction            | [Data methodology](docs/data-methodology.md)           |
+| Joint-sensor experiment and its limitations          | [Multivariate research](docs/multivariate-research.md) |
+| Compare the three methods without inventing accuracy | [Model audit](docs/model-audit.md)                     |
+| 3D source, license and modifications                 | [Asset provenance](docs/asset-provenance.md)           |
+| Tests, CI evidence and limitations                   | [Verification matrix](docs/testing.md)                 |
+| Visual regression and Figma comparisons              | [Design fidelity](docs/design-fidelity.md)             |
+| Engineering record (Indonesian)                      | [Laporan engineering](docs/laporan-engineering.md)     |
 
 ## Credits and rights
 

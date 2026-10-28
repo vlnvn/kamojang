@@ -60,3 +60,7 @@ Run `npm run dev:research` after installing the pinned research requirements; us
 ## Separate multivariate protocol
 
 The optional Isolation Forest path is specified in [Multivariate research](multivariate-research.md). It uses a 35/9 chronological split for the 44-row source, separate from GPR's 36/8 split. Robust scores and sensitivity counts remain authoritative in the original sensor views. Joint-model scores, manual-candidate decisions and contamination sensitivity are not merged into those per-sensor flags. No new fault-accuracy claim is implied.
+
+## Cross-method suitability audit
+
+The [model audit](model-audit.md) reproduces those original protocols before adding a separate training-only comparison on common chronological boundaries, additional observation blocks, IF configuration sensitivity and descriptive GPR interval coverage. It does not replace application results or publish measurement-bearing outputs. The GPR implementation uses elapsed time as its only input for five independent sensor regressions; it does not learn cross-sensor dependence. No verified incident labels establish a strongest anomaly detector.

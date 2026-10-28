@@ -80,3 +80,23 @@ The PR was temporarily non-mergeable because main gained README commit 0017eb7 i
 A fresh remote clone without private inputs passed npm ci, format, lint, types, 20 TypeScript tests, the combined 16 Python tests, production build and a 92-path scan; its working tree remained clean. It was fast-forwarded to the documentation-sync revision and rechecked for format and tracked-path guards. The local post-fix non-export browser invocation separately passed 27 tests with 5 intentional skips and one explicitly excluded export-finalization case. That exclusion is not counted as a pass. The isolated 11-test viewer/inspection suite passed. Original inputs and the licensed mesh retain their verified SHA-256 hashes.
 
 The remote green export checks demonstrate successful download/content verification on the stated Linux runner. They do not erase or explain the observed Windows Chromium finalization blockage, which also reproduced on the unchanged build. No browser security control was disabled. Later exact-head CI belongs to its own revision and is recorded on PR #1.
+
+## Three-method suitability audit — 28 October 2026
+
+The [model audit protocol](model-audit.md) adds a private, reproducible comparison and synthetic regression tests. Production estimators, API/UI, dependency locks, mesh and source inputs are unchanged. The branch was fast-forwarded through remote documentation commit `30e5f73` before publication; no remote work was discarded.
+
+| Gate                               | Observed outcome                                                                                                                                                                                  |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Combined Python suite              | PASS: `python -m unittest discover -s scripts -p 'test_*.py' -v`, 24 tests, including 8 new audit tests; NumPy 2.4.4, sklearn 1.9.0, Python 3.14.0, Windows                                       |
+| TypeScript suite                   | PASS: `npm test`, 20 tests                                                                                                                                                                        |
+| Private browser-estimator parity   | PASS: `npm run audit:private`, all 220 source values and 220 robust scores/flags, original threshold counts retained                                                                              |
+| Private three-method execution     | PASS: `python scripts/model_audit.py --source ... --archive ... --report ...`; independent source/robust parity and all 15 archived forecast MAE/RMSE pairs reproduced; private result files only |
+| Split discipline                   | PASS within tests: common evaluation-row identities, training-only preprocessing/references, future-value perturbation invariance and rejection of same-date boundaries                           |
+| Scope of comparison                | Original application protocols preserved; additional matched observation blocks, seed/tree/offset checks and predictive-band counts are exploratory diagnostics                                   |
+| Fault-accuracy / universal winner  | BLOCKED: no independent incident labels/event times. Precision, recall, F1, false-alarm rate and winner remain null, not invented                                                                 |
+| Report/dataset equivalence         | FAIL as an equivalence claim: the PDF's stated coverage and holdout do not identify the same evaluation population as the workbook; original files retained                                       |
+| UI/3D/Windows download limitations | No UI or asset change in this audit; previously documented visual signoff and local download-finalization limits remain open                                                                      |
+
+Repository quality checks also passed: formatting, ESLint, TypeScript checking and production build. Bundle names/sizes are unchanged; the existing large viewer-chunk warning remains visible.
+
+The local Python timing samples measure different warm computation workloads and are stored privately with thread settings. They do not establish production latency, peak memory, or a faster browser implementation. CI's added audit step uses synthetic data only; exact-head remote status belongs to the PR checks and must be verified independently before claiming it passed.
