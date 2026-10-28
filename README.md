@@ -21,8 +21,7 @@ Use the implementation branch while the PR is under review; the default branch c
 - **Screen deviations:** Recompute retrospective median/MAD scores at thresholds of 3.0, 3.5 or 4.0. Keep quality warnings separate from statistical flags. Export assessments as CSV or JSON.
 - **Inspect equipment context:** View an optimized, licensed steam-turbine model with bounded camera controls, keyboard/touch support and a static fallback. The model is representative equipment, not a digital twin of Kamojang Unit 5.
 - **Evaluate forecasts:** Optionally run GPR and two forecasting baselines through a Python service bound to localhost. This is a forecasting experiment, not an equipment-failure classifier.
-
-- **Explore joint patterns:** Run an opt-in Isolation Forest with explicit model settings, separate reference/holdout results and a manual candidate that never becomes training data. See the [multivariate workflow](docs/multivariate-research.md).
+- **Explore joint patterns:** Run an opt-in five-sensor Isolation Forest with contamination and tree-count controls, independent reference and chronological holdout results, and manual candidate scoring without refitting. See the [multivariate workflow](docs/multivariate-research.md).
 
 The robust screening workflow works without Python. Uploaded files remain in memory and are discarded on refresh; exports must be protected to the same standard as their source.
 
@@ -69,7 +68,7 @@ The frontend uses React, TypeScript and Vite. The robust estimator is implemente
 
 ## Verification
 
-The recorded development checks include 20 TypeScript tests and 16 Python tests, plus separate public and actual-service browser suites (dated results in the verification matrix). CI runs quality/build, browser/accessibility and local-GPR/security jobs. The private-workbook parity check is separate and cannot run in public CI.
+The recorded development checks include 20 TypeScript tests and 16 Python tests, plus separate public and actual-service browser suites (dated results in the verification matrix). CI runs quality/build, browser/accessibility and local-research/security jobs. The private-workbook parity check is separate and cannot run in public CI.
 
 ```sh
 npm run format:check
@@ -92,6 +91,7 @@ These commands do not replace asset licensing review or real-device testing. The
 | Documentation guide                              | [Start here](docs/README.md)                       |
 | System boundaries and component responsibilities | [Architecture](docs/architecture.md)               |
 | Data contract, estimator and reproduction        | [Data methodology](docs/data-methodology.md)       |
+| Joint-sensor experiment and its limitations       | [Multivariate research](docs/multivariate-research.md) |
 | 3D source, license and modifications             | [Asset provenance](docs/asset-provenance.md)       |
 | Tests, CI evidence and limitations               | [Verification matrix](docs/testing.md)             |
 | Visual regression and Figma comparisons          | [Design fidelity](docs/design-fidelity.md)         |
