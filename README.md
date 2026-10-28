@@ -86,16 +86,16 @@ These commands do not replace asset licensing review or real-device testing. The
 
 ## Documentation
 
-| Topic                                            | Document                                           |
-| ------------------------------------------------ | -------------------------------------------------- |
-| Documentation guide                              | [Start here](docs/README.md)                       |
-| System boundaries and component responsibilities | [Architecture](docs/architecture.md)               |
-| Data contract, estimator and reproduction        | [Data methodology](docs/data-methodology.md)       |
-| Joint-sensor experiment and its limitations       | [Multivariate research](docs/multivariate-research.md) |
-| 3D source, license and modifications             | [Asset provenance](docs/asset-provenance.md)       |
-| Tests, CI evidence and limitations               | [Verification matrix](docs/testing.md)             |
-| Visual regression and Figma comparisons          | [Design fidelity](docs/design-fidelity.md)         |
-| Engineering record (Indonesian)                  | [Laporan engineering](docs/laporan-engineering.md) |
+| Topic                                            | Document                                               |
+| ------------------------------------------------ | ------------------------------------------------------ |
+| Documentation guide                              | [Start here](docs/README.md)                           |
+| System boundaries and component responsibilities | [Architecture](docs/architecture.md)                   |
+| Data contract, estimator and reproduction        | [Data methodology](docs/data-methodology.md)           |
+| Joint-sensor experiment and its limitations      | [Multivariate research](docs/multivariate-research.md) |
+| 3D source, license and modifications             | [Asset provenance](docs/asset-provenance.md)           |
+| Tests, CI evidence and limitations               | [Verification matrix](docs/testing.md)                 |
+| Visual regression and Figma comparisons          | [Design fidelity](docs/design-fidelity.md)             |
+| Engineering record (Indonesian)                  | [Laporan engineering](docs/laporan-engineering.md)     |
 
 ## Credits and rights
 
